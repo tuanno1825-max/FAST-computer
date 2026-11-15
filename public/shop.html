@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAST Computer - Linh kiện PC Chính hãng</title>
+  <link rel="stylesheet" href="/css/shop.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="shop-header">
+    <div class="container header-inner">
+      <a href="/" class="brand">
+        <div class="brand-icon">FC</div>
+        <div class="brand-text">
+          <strong>FAST COMPUTER</strong>
+          <span>Linh kiện PC Chính hãng</span>
+        </div>
+      </a>
+
+      <div class="header-search">
+        <input type="text" id="shopSearch" placeholder="Tìm CPU, VGA RTX 4060, RAM DDR4, SSD..." oninput="onHeaderSearchInput(this.value)" />
+        <button class="btn btn-outline btn-sm" id="btnClearShopSearch" style="display:none; border-radius:999px; padding:6px 10px;" onclick="clearShopSearch()" title="Xóa từ khóa">✕</button>
+        <button class="btn btn-primary btn-sm" onclick="loadProducts()">Tìm kiếm</button>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openCartModal()">
+          🛒 Giỏ hàng <span class="cart-badge" id="cartCount">0</span>
+        </button>
+        <a href="/login.html" class="btn btn-outline">🔐 Quản trị</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- COMPACT HERO -->
+  <section class="hero-strip">
+    <div class="container hero-content">
+      <div>
+        <h1>Linh Kiện Máy Tính Chính Hãng — Giá Minh Bạch</h1>
+        <p>Kiểm tra tồn kho theo thời gian thực · Xuất hóa đơn VAT · Bảo hành 36–60 tháng</p>
+      </div>
+      <div class="hero-pills">
+        <span class="hero-pill">✅ Hàng mới 100%</span>
+        <span class="hero-pill">⚡ Giao nhanh nội thành</span>
+        <span class="hero-pill">🛡️ Bảo hành điện tử</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main class="container shop-layout">
+    <!-- BỘ LỌC BÊN TRÁI -->
+    <aside class="filter-panel">
+      <div class="filter-group">
+        <div class="filter-title">Danh mục linh kiện</div>
+        <div class="cat-list" id="categoryFilterList">
+          <button class="cat-btn active">Đang tải...</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title">Thương hiệu</div>
+        <div class="cat-list" id="brandFilterList">
+          <button class="cat-btn active">Tất cả hãng</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-title">Tình trạng kho</div>
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+          <input type="checkbox" id="filterInStock" onchange="loadProducts()" />
+          Chỉ hiện sản phẩm còn hàng
+        </label>
+      </div>
+    </aside>
+
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <section>
+      <div class="shop-toolbar">
+        <div class="result-count" id="resultCount">Đang tải sản phẩm...</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:13px; color:#64748b;">Sắp xếp:</span>
+          <select id="sortSelect" class="sort-select" onchange="loadProducts()">
+            <option value="newest">Mới nhất</option>
+            <option value="price_asc">Giá tăng dần</option>
+            <option value="price_desc">Giá giảm dần</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        <!-- Render bằng JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL DÙNG CHUNG (XEM NHANH / GIỎ HÀNG) -->
+  <div id="shopModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="shopModalTitle">Thông tin</h3>
+        <button class="modal-close" onclick="closeShopModal()">&times;</button>
+      </div>
+      <div id="shopModalBody"></div>
+    </div>
+  </div>
+
+  <div id="shopToast" class="toast"></div>
+
+  <script src="/js/shop.js"></script>
+</body>
+</html>

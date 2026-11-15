@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAST Computer - Quản lý Cửa hàng Linh kiện PC & Kế toán</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>FAST COMPUTER</h2>
+        <span>Quản lý Bán hàng & Kế toán</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Tổng quan</div>
+        <a class="nav-item active" data-tab="dashboard">🏠 Trang chủ (Dashboard)</a>
+
+        <div class="nav-section-title">Danh mục (CRUD)</div>
+        <a class="nav-item" data-tab="products" data-roles="Admin,KeToan,BanHang,ThuKho">💻 Sản phẩm / Linh kiện</a>
+        <a class="nav-item" data-tab="categories" data-roles="Admin,KeToan,ThuKho">🗂️ Loại hàng</a>
+        <a class="nav-item" data-tab="customers" data-roles="Admin,KeToan,BanHang">👥 Khách hàng</a>
+        <a class="nav-item" data-tab="suppliers" data-roles="Admin,KeToan,ThuKho">🏢 Nhà cung cấp</a>
+        <a class="nav-item" data-tab="users" data-roles="Admin">🛡️ Nhân viên & Phân quyền</a>
+
+        <div class="nav-section-title">Nghiệp vụ chính</div>
+        <a class="nav-item" data-tab="purchase" data-roles="Admin,KeToan,ThuKho">📥 Nhập hàng (Mua hàng)</a>
+        <a class="nav-item" data-tab="sales" data-roles="Admin,KeToan,BanHang">🧾 Bán hàng (Hóa đơn)</a>
+        <a class="nav-item" data-tab="inventory" data-roles="Admin,KeToan,BanHang,ThuKho">📦 Kho & Vị trí kệ</a>
+        <a class="nav-item" data-tab="stocktake" data-roles="Admin,ThuKho,KeToan">📋 Kiểm kê kho</a>
+        <a class="nav-item" data-tab="finance" data-roles="Admin,KeToan">💰 Thu - Chi & Công nợ</a>
+        <a class="nav-item" data-tab="warranty" data-roles="Admin,BanHang,ThuKho">🛠️ Bảo hành linh kiện</a>
+        <a class="nav-item" data-tab="reports" data-roles="Admin,KeToan">📊 Báo cáo thống kê</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-title" id="pageTitle">Trang chủ (Tổng quan hệ thống)</div>
+        <div class="topbar-user">
+          <a href="/" class="btn btn-outline btn-sm" style="text-decoration:none;">🛒 Trang bán hàng</a>
+          <span id="userName">Đang tải...</span>
+          <span id="userRole" class="role-badge">Role</span>
+          <button class="btn btn-outline btn-sm" id="btnLogout">Đăng xuất</button>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <!-- TAB DASHBOARD -->
+        <section id="tab-dashboard">
+          <div class="panel" style="padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <strong style="font-size:13px; color:#475569;">📅 Kỳ báo cáo:</strong>
+              <button type="button" class="btn btn-outline btn-sm dash-period-btn" data-period="today" onclick="setDashboardPeriod('today', this)">Hôm nay</button>
+              <button type="button" class="btn btn-outline btn-sm dash-period-btn" data-period="7d" onclick="setDashboardPeriod('7d', this)">7 ngày qua</button>
+              <button type="button" class="btn btn-outline btn-sm dash-period-btn" data-period="month" onclick="setDashboardPeriod('month', this)">Tháng này</button>
+              <button type="button" class="btn btn-primary btn-sm dash-period-btn" data-period="all" onclick="setDashboardPeriod('all', this)">Tất cả</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <input type="date" id="dashFrom" class="form-control" style="width:140px; padding:5px 8px; font-size:13px;" title="Từ ngày" />
+              <span style="color:#64748b;">→</span>
+              <input type="date" id="dashTo" class="form-control" style="width:140px; padding:5px 8px; font-size:13px;" title="Đến ngày" />
+              <button type="button" class="btn btn-outline btn-sm" onclick="applyDashboardDateRange()">Lọc ngày</button>
+            </div>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card success">
+              <div class="kpi-label">Tổng Doanh Thu Hóa Đơn</div>
+              <div class="kpi-value" id="kpiTotalRevenue">0 ₫</div>
+              <div class="kpi-sub" id="kpiTotalInvoices">0 hóa đơn đã lập</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Tổng Sản Phẩm & Tồn Kho</div>
+              <div class="kpi-value" id="kpiTotalStock">0</div>
+              <div class="kpi-sub" id="kpiTotalProducts">0 mã linh kiện</div>
+            </div>
+            <div class="kpi-card warn">
+              <div class="kpi-label">Cảnh Báo Sắp Hết Hàng</div>
+              <div class="kpi-value" id="kpiLowStock">0</div>
+              <div class="kpi-sub">Sản phẩm chạm mức tối thiểu</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Công Nợ Phải Thu (TK 131)</div>
+              <div class="kpi-value" id="kpiCustomerDebt">0 ₫</div>
+              <div class="kpi-sub" id="kpiSupplierPayable">Phải trả NCC (TK 331): 0 ₫</div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>🧾 Hóa đơn bán hàng gần đây</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Số HĐ</th>
+                      <th>Khách hàng</th>
+                      <th class="text-right">Tổng tiền</th>
+                      <th class="text-right">Còn nợ</th>
+                      <th>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentInvoicesBody">
+                    <tr><td colspan="5">Đang tải dữ liệu...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h3>⚠️ Linh kiện sắp hết hàng</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Mã SKU</th>
+                      <th>Tên linh kiện</th>
+                      <th class="text-right">Tồn</th>
+                      <th class="text-right">Tối thiểu</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lowStockBody">
+                    <tr><td colspan="4">Đang tải dữ liệu...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>📥 Phiếu nhập kho gần đây</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Số phiếu</th>
+                      <th>Nhà cung cấp</th>
+                      <th>Người lập</th>
+                      <th class="text-right">Tổng tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentReceiptsBody">
+                    <tr><td colspan="4">Đang tải dữ liệu...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h3>📊 Tồn kho theo Loại linh kiện</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Loại hàng</th>
+                      <th class="text-right">Số lượng tồn</th>
+                      <th class="text-right">Giá trị tồn (Giá vốn)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="categoryStockBody">
+                    <tr><td colspan="3">Đang tải dữ liệu...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VÙNG HIỂN THỊ CÁC PHÂN HỆ CRUD & NGHIỆP VỤ -->
+        <section id="tab-dynamic" style="display:none;"></section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL DÙNG CHUNG -->
+  <div id="appModal" class="modal-backdrop">
+    <div class="modal-box" id="modalBox">
+      <div class="modal-header">
+        <h3 id="modalTitle">Tiêu đề</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- TOAST THÔNG BÁO -->
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

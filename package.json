@@ -1,0 +1,17 @@
+{
+  "name": "fast-computer-app",
+  "version": "1.0.0",
+  "description": "Phần mềm Quản lý Cửa hàng Linh kiện Máy tính & Kế toán FAST Computer (SME)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "init-db": "node scripts/initDb.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "pg": "^8.13.3"
+  }
+}
