@@ -146,7 +146,7 @@ async function loadProducts() {
         <div class="product-thumb" style="overflow:hidden;">
           ${
             p.image_url
-              ? `<img src="${p.image_url}" alt="${p.product_name}" style="width:100%; height:100%; object-fit:contain; padding:6px;" />`
+              ? `<img src="${p.image_url}" alt="${p.product_name}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:contain; padding:6px;" />`
               : `<div class="thumb-emoji">${getCategoryIcon(p.category_name)}</div><span class="thumb-sku">${p.sku}</span>`
           }
         </div>
