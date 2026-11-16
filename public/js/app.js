@@ -3644,6 +3644,8 @@ function printStocktakeVoucher(id) {
 // ============================================================================
 // 10. MODULE THU - CHI & CÔNG NỢ (FINANCE / CASHBOOK)
 // ============================================================================
+let cachedFinancePayments = [];
+
 async function renderFinanceTab(q = '', type = '', method = '', from = '', to = '') {
   document.getElementById('tab-dynamic').innerHTML = `
     <div class="panel">
@@ -3690,9 +3692,10 @@ async function renderFinanceTab(q = '', type = '', method = '', from = '', to = 
               <th class="text-right">Số tiền</th>
               <th>Nội dung / Ghi chú</th>
               <th>Người lập</th>
+              <th class="text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody id="finBody"><tr><td colspan="8">Đang tải...</td></tr></tbody>
+          <tbody id="finBody"><tr><td colspan="9">Đang tải...</td></tr></tbody>
         </table>
       </div>
     </div>`;
@@ -3706,6 +3709,7 @@ async function renderFinanceTab(q = '', type = '', method = '', from = '', to = 
 
   const data = await apiFetch(`/api/payments?${params.toString()}`);
   const rows = data.payments || [];
+  cachedFinancePayments = rows;
   const totalThu = rows.filter((r) => r.payment_type === 'Thu').reduce((s, r) => s + Number(r.amount || 0), 0);
   const totalChi = rows.filter((r) => r.payment_type === 'Chi').reduce((s, r) => s + Number(r.amount || 0), 0);
 
@@ -3735,10 +3739,54 @@ async function renderFinanceTab(q = '', type = '', method = '', from = '', to = 
         <td class="text-right"><strong style="color:${r.payment_type === 'Thu' ? '#16a34a' : '#dc2626'}">${r.payment_type === 'Thu' ? '+' : '-'}${formatVND(r.amount)}</strong></td>
         <td>${r.notes || '---'}</td>
         <td>${r.staff_name}</td>
+        <td class="text-right"><button class="btn btn-outline btn-sm" onclick="printPaymentVoucher(${r.payment_id})">🖨️ In</button></td>
       </tr>`;
         })
         .join('')
-    : '<tr><td colspan="8">Chưa có phát sinh Thu - Chi nào phù hợp.</td></tr>';
+    : '<tr><td colspan="9">Chưa có phát sinh Thu - Chi nào phù hợp.</td></tr>';
+}
+
+function printPaymentVoucher(id) {
+  const r = cachedFinancePayments.find((x) => Number(x.payment_id) === Number(id));
+  if (!r) return showToast('Không tìm thấy dữ liệu phiếu thu/chi.', 'error');
+  const isThu = r.payment_type === 'Thu';
+  const title = isThu ? 'PHIẾU THU' : 'PHIẾU CHI';
+  const formNo = isThu ? 'Mẫu số 01 - TT' : 'Mẫu số 02 - TT';
+  const methodText = (PAYMENT_METHOD_LABELS[r.payment_method] || r.payment_method || '').replace(/^[^\w\p{L}]+\s*/u, '');
+  const refText = r.invoice_no || r.receipt_no || 'Thu / Chi ngoài hóa đơn';
+  const win = window.open('', '_blank', 'width=850,height=650');
+  win.document.write(`
+    <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${title} ${r.payment_no}</title>
+    <style>
+      body { font-family: 'Times New Roman', serif; padding: 30px; color: #000; }
+      .head { display: flex; justify-content: space-between; margin-bottom: 18px; }
+      h2 { text-align: center; margin: 10px 0 4px; text-transform: uppercase; }
+      .sub { text-align: center; font-style: italic; margin-bottom: 18px; font-size: 13px; }
+      .box { border: 1px solid #333; padding: 14px 18px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+      .amount { font-size: 18px; font-weight: bold; }
+      .sigs { display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; margin-top: 38px; font-size: 13px; }
+    </style></head><body>
+    <div class="head">
+      <div><strong>CỬA HÀNG LINH KIỆN FAST COMPUTER</strong><br>Showroom: Hà Nội | MST: 0108889990</div>
+      <div><strong>${formNo}</strong><br>Số phiếu: <strong>${r.payment_no}</strong></div>
+    </div>
+    <h2>${title}</h2>
+    <div class="sub">Ngày lập: ${formatDate(r.payment_date)}</div>
+    <div class="box">
+      <div><strong>Hình thức thanh toán:</strong> ${methodText}</div>
+      <div><strong>Chứng từ liên quan:</strong> ${refText}</div>
+      <div><strong>Lý do ${isThu ? 'thu' : 'chi'}:</strong> ${r.notes || '---'}</div>
+      <div><strong>Số tiền:</strong> <span class="amount">${formatVND(r.amount)}</span></div>
+    </div>
+    <div class="sigs">
+      <div><strong>Người lập phiếu</strong><br><em>(Ký, họ tên)</em><br><br><br>${r.staff_name}</div>
+      <div><strong>Kế toán / Thủ quỹ</strong><br><em>(Ký, họ tên)</em></div>
+      <div><strong>${isThu ? 'Người nộp tiền' : 'Người nhận tiền'}</strong><br><em>(Ký, họ tên)</em></div>
+    </div>
+    <script>window.onload = () => window.print();</script>
+    </body></html>
+  `);
+  win.document.close();
 }
 
 function applyFinanceFilter() {
