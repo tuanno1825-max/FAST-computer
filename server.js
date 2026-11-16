@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const compression = require('compression');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -13,6 +14,7 @@ const extraRoutes = require('./routes/extra');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(compression());
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images'), { maxAge: '7d' }));
@@ -29,25 +31,41 @@ app.use(
   })
 );
 
-// Middleware đồng bộ trạng thái hoạt động (is_active) & quyền từ DB cho mọi phiên đăng nhập
+// Middleware đồng bộ trạng thái hoạt động (is_active) & quyền từ DB (cache 30s để giảm tải DB)
+const USER_SYNC_CACHE = new Map();
+const USER_SYNC_TTL_MS = 30 * 1000;
+
 async function syncSessionUser(req, res, next) {
   if (!req.session || !req.session.user) return next();
   if (req.path === '/auth/logout') return next();
-  try {
-    const r = await pool.query(
-      'SELECT user_id, username, full_name, role, is_active FROM users WHERE user_id = $1',
-      [req.session.user.user_id]
-    );
-    if (r.rows.length === 0 || !r.rows[0].is_active) {
+  const uid = req.session.user.user_id;
+  const cached = USER_SYNC_CACHE.get(uid);
+  if (cached && cached.expiresAt > Date.now()) {
+    if (!cached.is_active) {
       req.session.destroy(() => {});
       return res.status(403).json({ error: 'Tài khoản của bạn đã bị khóa hoặc không còn tồn tại.' });
     }
-    req.session.user = {
+    req.session.user = cached.user;
+    return next();
+  }
+  try {
+    const r = await pool.query(
+      'SELECT user_id, username, full_name, role, is_active FROM users WHERE user_id = $1',
+      [uid]
+    );
+    if (r.rows.length === 0 || !r.rows[0].is_active) {
+      USER_SYNC_CACHE.set(uid, { is_active: false, expiresAt: Date.now() + USER_SYNC_TTL_MS });
+      req.session.destroy(() => {});
+      return res.status(403).json({ error: 'Tài khoản của bạn đã bị khóa hoặc không còn tồn tại.' });
+    }
+    const userObj = {
       user_id: r.rows[0].user_id,
       username: r.rows[0].username,
       full_name: r.rows[0].full_name,
       role: r.rows[0].role,
     };
+    USER_SYNC_CACHE.set(uid, { is_active: true, user: userObj, expiresAt: Date.now() + USER_SYNC_TTL_MS });
+    req.session.user = userObj;
     next();
   } catch (err) {
     next(err);

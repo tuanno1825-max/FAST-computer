@@ -106,8 +106,13 @@ router.get('/products', requireAuth, async (req, res) => {
     const stockStatus = req.query.stock_status || 'all';
     const sort = req.query.sort || 'newest';
 
+    const isLite = req.query.lite === '1';
+    const cols = isLite
+      ? 'p.product_id, p.sku, p.product_name, p.category_id, p.brand, p.unit, p.import_price, p.sale_price, p.stock_qty, p.min_stock, p.warranty_months, p.shelf_location, p.is_active, c.category_name'
+      : 'p.*, c.category_name';
+
     let sql = `
-      SELECT p.*, c.category_name
+      SELECT ${cols}
       FROM products p
       JOIN categories c ON p.category_id = c.category_id
       WHERE (p.sku ILIKE $1 OR p.product_name ILIKE $1 OR c.category_name ILIKE $1 OR COALESCE(p.brand, '') ILIKE $1)

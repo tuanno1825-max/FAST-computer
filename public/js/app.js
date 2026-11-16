@@ -1889,7 +1889,7 @@ async function printPurchaseReceipt(id) {
 }
 
 async function openCreatePurchaseModal(preselectProductId = null) {
-  const [suppliers, products] = await Promise.all([apiFetch('/api/suppliers'), apiFetch('/api/products')]);
+  const [suppliers, products] = await Promise.all([apiFetch('/api/suppliers'), apiFetch('/api/products?lite=1')]);
   cachedSuppliers = suppliers;
   cachedProducts = products;
 
@@ -2667,7 +2667,7 @@ let cachedAvailableSerials = [];
 async function openCreateInvoiceModal() {
   const [customers, products, serials] = await Promise.all([
     apiFetch('/api/customers'),
-    apiFetch('/api/products'),
+    apiFetch('/api/products?lite=1'),
     apiFetch('/api/invoices/available-serials'),
   ]);
   cachedCustomers = customers;
@@ -3076,7 +3076,7 @@ async function renderInventoryTab(q = '', status = 'all') {
     </div>`;
 
   const [allStockForMap, stockRows, moves, allPurchases, pendingReturns] = await Promise.all([
-    apiFetch('/api/products'),
+    apiFetch('/api/products?lite=1'),
     apiFetch(`/api/inventory?q=${encodeURIComponent(q)}&status=${status}`),
     apiFetch(`/api/inventory/movements?q=${encodeURIComponent(q)}`),
     canConfirmWh ? apiFetch('/api/purchases').catch(() => []) : Promise.resolve([]),
@@ -3284,7 +3284,7 @@ function renderWarehouseFloorplan(highlightQuery = '') {
 
 async function openWarehouseMapModal(highlightQuery = '') {
   if (!cachedShelfProducts.length) {
-    cachedShelfProducts = await apiFetch('/api/products');
+    cachedShelfProducts = await apiFetch('/api/products?lite=1');
   }
 
   openModal(
@@ -3441,7 +3441,7 @@ async function submitMoveShelf(e, productId) {
 }
 
 async function openStocktakeModal(preselectId = null) {
-  const products = cachedShelfProducts.length ? cachedShelfProducts : await apiFetch('/api/products');
+  const products = cachedShelfProducts.length ? cachedShelfProducts : await apiFetch('/api/products?lite=1');
   cachedShelfProducts = products;
   const firstProd = products.find((p) => Number(p.product_id) === Number(preselectId)) || products[0];
 
