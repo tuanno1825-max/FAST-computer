@@ -340,15 +340,15 @@ async function submitOrder(e) {
     loadProducts();
 
     const isTransfer = data.payment_method === 'ChuyenKhoan';
-    const qrUrl = `https://img.vietqr.io/image/MB-0388888888-compact2.png?amount=${data.total_amount}&addInfo=${encodeURIComponent(data.invoice_no)}&accountName=${encodeURIComponent('FAST COMPUTER')}`;
+    const qrUrl = `https://img.vietqr.io/image/TCB-2122001888888-compact2.png?amount=${data.total_amount}&addInfo=${encodeURIComponent(data.invoice_no)}&accountName=${encodeURIComponent('PHAM ANH TUAN')}`;
     const paymentGuideHtml = isTransfer
       ? `<div style="margin:14px auto 0; max-width:360px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:12px; text-align:left; font-size:13px;">
           <div style="font-weight:700; color:#0f172a; margin-bottom:8px; text-align:center;">📲 Thông tin chuyển khoản VietQR</div>
           <div style="text-align:center; margin-bottom:8px;">
             <img src="${qrUrl}" alt="VietQR" style="width:180px; height:auto; border-radius:8px; border:1px solid #e2e8f0;" onerror="this.style.display='none'" />
           </div>
-          <div><strong>Ngân hàng:</strong> MB Bank (Quân Đội)</div>
-          <div><strong>Số tài khoản:</strong> <code>0388888888</code> — FAST COMPUTER</div>
+          <div><strong>Ngân hàng:</strong> Techcombank (TCB)</div>
+          <div><strong>Số tài khoản:</strong> <code>2122001888888</code> — PHAM ANH TUAN</div>
           <div><strong>Số tiền:</strong> <strong style="color:#2563eb;">${formatVND(data.total_amount)}</strong></div>
           <div><strong>Nội dung CK:</strong> <code style="background:#dbeafe; color:#1d4ed8; padding:2px 6px; border-radius:4px; font-weight:700;">${data.invoice_no}</code></div>
           <div style="color:#b45309; margin-top:8px; font-size:12px;">⏳ Đơn hàng đang ở trạng thái <strong>Chờ xác nhận thanh toán</strong>. Kế toán sẽ đối chiếu và xác nhận ngay khi nhận được tiền.</div>

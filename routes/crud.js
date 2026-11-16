@@ -164,7 +164,7 @@ router.post('/products', requireRole('Admin', 'KeToan', 'ThuKho'), async (req, r
         (unit || 'Cái').trim(),
         Number(import_price || 0),
         Number(sale_price || 0),
-        Number(stock_qty || 0),
+        0,
         Number(min_stock ?? 5),
         Number(warranty_months ?? 12),
         (shelf_location || '').trim(),

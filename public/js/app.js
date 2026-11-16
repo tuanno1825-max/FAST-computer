@@ -264,7 +264,7 @@ async function renderCategoriesTab(q = '') {
     <div class="panel">
       <div class="toolbar">
         <div class="search-box">
-          <input type="text" id="catSearch" class="form-control" placeholder="Tìm theo tên hoặc mô tả loại hàng..." value="${q}" />
+          <input type="text" id="catSearch" class="form-control" placeholder="Tìm theo tên hoặc mô tả loại hàng..." value="${q}" onkeydown="if(event.key==='Enter') renderCategoriesTab(this.value)" />
           <button class="btn btn-outline" onclick="renderCategoriesTab(document.getElementById('catSearch').value)">Tìm</button>
         </div>
         ${canEdit ? `<button class="btn btn-primary" onclick="openCategoryModal()">+ Thêm loại hàng</button>` : ''}
@@ -387,7 +387,7 @@ async function renderProductsTab(q = '', catId = '', stockStatus = 'all', sort =
     <div class="panel">
       <div class="toolbar" style="gap:8px;">
         <div class="search-box" style="max-width:none; flex-wrap:wrap;">
-          <input type="text" id="prodSearch" class="form-control" style="min-width:200px; flex:1;" placeholder="Tìm SKU, tên linh kiện, hãng..." value="${q}" />
+          <input type="text" id="prodSearch" class="form-control" style="min-width:200px; flex:1;" placeholder="Tìm SKU, tên linh kiện, hãng..." value="${q}" onkeydown="if(event.key==='Enter') applyProductFilters()" />
           <select id="prodCatFilter" class="form-control" style="max-width:170px;" onchange="applyProductFilters()">
             <option value="">Tất cả loại hàng</option>
             ${cachedCategories.map((c) => `<option value="${c.category_id}" ${String(catId) === String(c.category_id) ? 'selected' : ''}>${c.category_name}</option>`).join('')}
@@ -611,16 +611,21 @@ function openProductModal(p = null) {
           <input type="number" min="0" id="fSalePrice" class="form-control" value="${p ? p.sale_price : 0}" required />
         </div>
       </div>
+      ${p ? `
       <div class="form-grid-2">
         <div class="form-group">
-          <label>${p ? 'Tồn kho hiện tại (chỉ sửa qua Nhập/Xuất)' : 'Tồn kho ban đầu'}</label>
-          <input type="number" min="0" id="fStockQty" class="form-control" value="${p ? p.stock_qty : 0}" ${p ? 'disabled' : ''} />
+          <label>Tồn kho hiện tại (chỉ sửa qua Nhập/Xuất)</label>
+          <input type="number" min="0" id="fStockQty" class="form-control" value="${p.stock_qty}" disabled />
         </div>
         <div class="form-group">
           <label>Tồn kho tối thiểu (cảnh báo)</label>
-          <input type="number" min="0" id="fMinStock" class="form-control" value="${p ? p.min_stock : 5}" />
+          <input type="number" min="0" id="fMinStock" class="form-control" value="${p.min_stock}" />
         </div>
-      </div>
+      </div>` : `
+      <div class="form-group">
+        <label>Tồn kho tối thiểu (cảnh báo)</label>
+        <input type="number" min="0" id="fMinStock" class="form-control" value="5" />
+      </div>`}
       <div class="form-grid-2">
         <div class="form-group">
           <label>Vị trí kệ kho</label>
@@ -711,7 +716,7 @@ async function saveProduct(e, id) {
       warranty_months: document.getElementById('fWarranty').value,
       import_price: document.getElementById('fImportPrice').value,
       sale_price: document.getElementById('fSalePrice').value,
-      stock_qty: document.getElementById('fStockQty').value,
+      stock_qty: document.getElementById('fStockQty')?.value ?? 0,
       min_stock: document.getElementById('fMinStock').value,
       shelf_location: document.getElementById('fShelf').value,
       is_active: document.getElementById('fProdActive').value === 'true',
@@ -752,7 +757,7 @@ async function renderCustomersTab(q = '', hasDebt = false, group = '') {
     <div class="panel">
       <div class="toolbar" style="gap:8px;">
         <div class="search-box" style="max-width:none; flex-wrap:wrap; align-items:center;">
-          <input type="text" id="custSearch" class="form-control" style="min-width:200px; flex:1;" placeholder="Tìm tên, SĐT, MST, Email..." value="${q}" />
+          <input type="text" id="custSearch" class="form-control" style="min-width:200px; flex:1;" placeholder="Tìm tên, SĐT, MST, Email..." value="${q}" onkeydown="if(event.key==='Enter') applyCustomerFilters()" />
           <select id="custGroupFilter" class="form-control" style="max-width:170px;" onchange="applyCustomerFilters()">
             <option value="">Tất cả nhóm KH</option>
             <option value="KhachLe" ${group === 'KhachLe' ? 'selected' : ''}>Khách lẻ</option>
@@ -1045,7 +1050,7 @@ async function renderSuppliersTab(q = '', hasDebt = false) {
     <div class="panel">
       <div class="toolbar" style="gap:8px;">
         <div class="search-box" style="max-width:none; flex-wrap:wrap; align-items:center;">
-          <input type="text" id="supSearch" class="form-control" style="min-width:220px; flex:1;" placeholder="Tìm tên NCC, MST, Sale phụ trách, STK..." value="${q}" />
+          <input type="text" id="supSearch" class="form-control" style="min-width:220px; flex:1;" placeholder="Tìm tên NCC, MST, Sale phụ trách, STK..." value="${q}" onkeydown="if(event.key==='Enter') applySupplierFilters()" />
           <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#d97706; cursor:pointer; white-space:nowrap;">
             <input type="checkbox" id="supDebtFilter" ${hasDebt ? 'checked' : ''} onchange="applySupplierFilters()" />
             Chỉ NCC đang có dư nợ (TK 331 &gt; 0)
@@ -1297,7 +1302,7 @@ async function renderUsersTab(q = '') {
     <div class="panel">
       <div class="toolbar">
         <div class="search-box">
-          <input type="text" id="userSearch" class="form-control" placeholder="Tìm theo username, họ tên, vai trò..." value="${q}" />
+          <input type="text" id="userSearch" class="form-control" placeholder="Tìm theo username, họ tên, vai trò..." value="${q}" onkeydown="if(event.key==='Enter') renderUsersTab(this.value)" />
           <button class="btn btn-outline" onclick="renderUsersTab(document.getElementById('userSearch').value)">Tìm</button>
         </div>
         <div style="display:flex; gap:8px;">
@@ -1362,7 +1367,7 @@ async function renderUsersTab(q = '') {
 
 function openRoleMatrixModal() {
   openModal(
-    'Ma trận Phân quyền Hệ thống (RBAC - Chuẩn Thông tư 200)',
+    'Ma trận Phân quyền Hệ thống (RBAC)',
     `
     <p style="font-size:13px; color:#64748b; margin-bottom:12px;">
       Hệ thống kiểm soát chặt chẽ quyền truy cập theo từng vị trí công việc ở cả giao diện lẫn API Backend:
@@ -1379,15 +1384,19 @@ function openRoleMatrixModal() {
           </tr>
         </thead>
         <tbody>
-          <tr><td><strong>Trang chủ (Dashboard)</strong></td><td>Toàn quyền</td><td>Toàn quyền</td><td>Xem hạn chế</td><td>Xem cảnh báo kho</td></tr>
-          <tr><td><strong>Sản phẩm & Giá vốn</strong></td><td>Toàn quyền</td><td>Xem & Sửa giá</td><td>Chỉ xem (<strong>Ẩn giá nhập</strong>)</td><td>Thêm/Sửa & Gán kệ</td></tr>
+          <tr><td><strong>Trang chủ (Dashboard)</strong></td><td>Toàn quyền</td><td>Toàn quyền</td><td>Xem hạn chế (<strong>Ẩn giá vốn, TK 331</strong>)</td><td>Xem hạn chế (Cảnh báo kho)</td></tr>
+          <tr><td><strong>Sản phẩm & Giá vốn</strong></td><td>Toàn quyền</td><td>Toàn quyền (Thêm/Sửa/Xóa)</td><td>Chỉ xem (<strong>Ẩn giá nhập</strong>)</td><td>Thêm/Sửa & Gán kệ</td></tr>
           <tr><td><strong>Loại hàng</strong></td><td>Toàn quyền</td><td>Toàn quyền</td><td>Ẩn</td><td>Xem/Thêm/Sửa</td></tr>
           <tr><td><strong>Khách hàng & TK 131</strong></td><td>Toàn quyền</td><td>Toàn quyền & Thu nợ</td><td>Thêm/Sửa & Thu nợ</td><td>Ẩn</td></tr>
           <tr><td><strong>Nhà cung cấp & TK 331</strong></td><td>Toàn quyền</td><td>Toàn quyền & Trả nợ</td><td>Ẩn</td><td>Xem/Thêm/Sửa</td></tr>
+          <tr><td><strong>Nhập hàng (Mua hàng)</strong></td><td>Toàn quyền</td><td>Lập, Xem & Thanh toán</td><td>Ẩn</td><td>Lập phiếu & <strong>Duyệt nhập kho</strong></td></tr>
+          <tr><td><strong>Bán hàng (Hóa đơn)</strong></td><td>Toàn quyền</td><td>Lập, Xem & Thu tiền</td><td>Lập, Xem & Thu tiền</td><td>Kiểm nhận hàng Đổi/Trả</td></tr>
+          <tr><td><strong>Kho & Sơ đồ kệ</strong></td><td>Toàn quyền</td><td>Xem tồn & Thẻ kho</td><td>Xem tồn & Thẻ kho</td><td>Quản lý tồn & Chuyển kệ</td></tr>
+          <tr><td><strong>Kiểm kê kho</strong></td><td>Toàn quyền</td><td>Xem & Lập phiếu</td><td>Ẩn</td><td>Xem & Lập phiếu</td></tr>
+          <tr><td><strong>Bảo hành linh kiện (RMA)</strong></td><td>Toàn quyền</td><td>Ẩn</td><td>Tra cứu & Tiếp nhận BH</td><td>Tra cứu & Xử lý RMA</td></tr>
+          <tr><td><strong>Quỹ & Sổ Thu/Chi (PT/PC)</strong></td><td>Toàn quyền</td><td>Toàn quyền</td><td>Ẩn</td><td>Ẩn</td></tr>
+          <tr><td><strong>Báo cáo kế toán</strong></td><td>Toàn quyền</td><td>Toàn quyền</td><td>Ẩn</td><td>Ẩn</td></tr>
           <tr><td><strong>Nhân viên & Phân quyền</strong></td><td>Toàn quyền</td><td>Ẩn</td><td>Ẩn</td><td>Ẩn</td></tr>
-          <tr><td><strong>Nhập hàng (Mua hàng)</strong></td><td>Toàn quyền</td><td>Lập & Xem phiếu</td><td>Ẩn</td><td>Lập phiếu nhập</td></tr>
-          <tr><td><strong>Bán hàng (Hóa đơn)</strong></td><td>Toàn quyền</td><td>Lập & Xem HĐ</td><td>Lập & Xem HĐ</td><td>Ẩn</td></tr>
-          <tr><td><strong>Kho & Sơ đồ kệ</strong></td><td>Toàn quyền</td><td>Xem tồn & Lịch sử</td><td>Xem tồn</td><td>Quản lý tồn & Kệ</td></tr>
         </tbody>
       </table>
     </div>`,
@@ -1520,7 +1529,7 @@ async function renderPurchaseTab(q = '', fromDate = '', toDate = '', unpaidOnly 
     <div class="panel">
       <div class="toolbar" style="gap:8px;">
         <div class="search-box" style="max-width:none; flex-wrap:wrap; align-items:center;">
-          <input type="text" id="purSearch" class="form-control" style="min-width:190px; flex:1;" placeholder="Tìm số phiếu, HĐ VAT, tên NCC..." value="${q}" />
+          <input type="text" id="purSearch" class="form-control" style="min-width:190px; flex:1;" placeholder="Tìm số phiếu, HĐ VAT, tên NCC..." value="${q}" onkeydown="if(event.key==='Enter') applyPurchaseFilters()" />
           <input type="date" id="purFrom" class="form-control" style="max-width:145px;" title="Từ ngày" value="${fromDate}" />
           <input type="date" id="purTo" class="form-control" style="max-width:145px;" title="Đến ngày" value="${toDate}" />
           <label style="display:flex; align-items:center; gap:5px; font-size:13px; font-weight:600; color:#d97706; cursor:pointer; white-space:nowrap;">
@@ -1988,9 +1997,9 @@ function addPurchaseRow() {
   calcPurchaseTotals();
 }
 
-function filterPurchaseProdSelect(input) {
+function filterRowProdSelect(input, selectClass, priceField, onChangeFn) {
   const tr = input.closest('tr');
-  const sel = tr.querySelector('.pur-prod');
+  const sel = tr.querySelector(selectClass);
   const kw = (input.value || '').trim().toLowerCase();
   const filtered = kw
     ? cachedProducts.filter(
@@ -2001,11 +2010,19 @@ function filterPurchaseProdSelect(input) {
     ? filtered
         .map(
           (p) =>
-            `<option value="${p.product_id}" data-price="${p.import_price}">${p.sku} - ${p.product_name} (Tồn: ${p.stock_qty})</option>`
+            `<option value="${p.product_id}" data-price="${p[priceField]}" data-stock="${p.stock_qty}">${p.sku} - ${p.product_name} (Tồn: ${p.stock_qty})</option>`
         )
         .join('')
     : '<option value="" disabled selected>Không tìm thấy linh kiện</option>';
-  if (filtered.length) onPurchaseProdChange(sel);
+  if (filtered.length) onChangeFn(sel);
+}
+
+function filterPurchaseProdSelect(input) {
+  filterRowProdSelect(input, '.pur-prod', 'import_price', onPurchaseProdChange);
+}
+
+function filterInvoiceProdSelect(input) {
+  filterRowProdSelect(input, '.inv-prod', 'sale_price', onInvoiceProdChange);
 }
 
 function onPurchaseProdChange(sel) {
@@ -2069,7 +2086,7 @@ async function renderSalesTab(q = '', from = '', to = '', status = '') {
     <div class="panel">
       <div class="toolbar" style="flex-wrap:wrap; gap:10px;">
         <div class="search-box" style="flex-wrap:wrap; gap:8px;">
-          <input type="text" id="invSearch" class="form-control" style="min-width:220px;" placeholder="Tìm số HĐ, khách hàng, SĐT, nhân viên..." value="${q}" />
+          <input type="text" id="invSearch" class="form-control" style="min-width:220px;" placeholder="Tìm số HĐ, khách hàng, SĐT, nhân viên..." value="${q}" onkeydown="if(event.key==='Enter') applySalesFilter()" />
           <input type="date" id="invFrom" class="form-control" style="width:145px;" title="Từ ngày" value="${from}" />
           <input type="date" id="invTo" class="form-control" style="width:145px;" title="Đến ngày" value="${to}" />
           <select id="invStatus" class="form-control" style="width:170px;" onchange="applySalesFilter()">
@@ -2211,6 +2228,18 @@ async function viewInvoiceDetail(id) {
         <div class="summary-row"><span>Khách đã trả:</span><span>${formatVND(i.paid_amount)}</span></div>
         <div class="summary-row"><span>Ghi nợ (TK 131):</span><span style="color:#dc2626; font-weight:700;">${formatVND(i.debt_amount)}</span></div>
       </div>
+      ${
+        Number(i.debt_amount) > 0 && !isVoid
+          ? `<div style="margin:12px 0; padding:10px 14px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+              <img src="https://img.vietqr.io/image/TCB-2122001888888-compact2.png?amount=${Number(i.debt_amount)}&addInfo=${encodeURIComponent(i.invoice_no)}&accountName=${encodeURIComponent('PHAM ANH TUAN')}" alt="VietQR" style="width:120px; height:auto; border-radius:6px; border:1px solid #e2e8f0;" onerror="this.style.display='none'" />
+              <div style="font-size:12.5px; line-height:1.6;">
+                <div style="font-weight:700; color:#0f172a;">📲 Mã VietQR thanh toán phần còn lại</div>
+                <div><strong>Ngân hàng:</strong> Techcombank — <code>2122001888888</code> (PHAM ANH TUAN)</div>
+                <div><strong>Số tiền:</strong> <strong style="color:#2563eb;">${formatVND(i.debt_amount)}</strong> | <strong>Nội dung:</strong> <code>${i.invoice_no}</code></div>
+              </div>
+            </div>`
+          : ''
+      }
       <div class="modal-footer" style="justify-content:space-between; flex-wrap:wrap; gap:8px;">
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           ${
@@ -2652,8 +2681,10 @@ async function openCreateInvoiceModal() {
       <div class="form-grid-2">
         <div class="form-group">
           <label>Khách hàng *</label>
-          <select id="invCustomer" class="form-control" onchange="checkInvoiceWalkinRule()" required>
+          <input type="text" id="invCustSearch" class="form-control" style="margin-bottom:5px; font-size:12px; padding:5px 8px;" placeholder="🔍 Tìm tên hoặc SĐT khách hàng..." oninput="filterInvoiceCustSelect(this)" />
+          <select id="invCustomer" class="form-control" onchange="onInvoiceCustChange()" required>
             ${customers.map((c) => `<option value="${c.customer_id}">${c.customer_name} (${c.phone})</option>`).join('')}
+            <option value="__NEW__">➕ Thêm khách hàng mới...</option>
           </select>
         </div>
         <div class="form-group">
@@ -2663,6 +2694,44 @@ async function openCreateInvoiceModal() {
             <option value="8">VAT 8%</option>
             <option value="0">Không chịu VAT (0%)</option>
           </select>
+        </div>
+      </div>
+
+      <div id="invNewCustomerBox" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:10px 12px; margin-bottom:10px;">
+        <div style="font-weight:700; font-size:12.5px; color:#1e3a8a; margin-bottom:8px;">➕ Thông tin Khách hàng mới (tự động lưu vào Danh sách Khách hàng)</div>
+        <div class="form-grid-2">
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>Tên khách hàng / Doanh nghiệp *</label>
+            <input type="text" id="invNewCustName" class="form-control" placeholder="VD: Anh Minh / Net Cyber..." />
+          </div>
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>Nhóm khách hàng *</label>
+            <select id="invNewCustGroup" class="form-control">
+              <option value="KhachLe">Khách lẻ</option>
+              <option value="PhongNet">Phòng Net / Đại lý</option>
+              <option value="DoanhNghiep">Doanh nghiệp</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>Số điện thoại * (bắt đầu bằng 0)</label>
+            <input type="text" id="invNewCustPhone" class="form-control" placeholder="09xxxxxxxx" />
+          </div>
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>Email (nhận hóa đơn điện tử)</label>
+            <input type="email" id="invNewCustEmail" class="form-control" placeholder="ketoan@congty.vn" />
+          </div>
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>Mã số thuế (xuất hóa đơn VAT)</label>
+            <input type="text" id="invNewCustTax" class="form-control" placeholder="VD: 0109988776" />
+          </div>
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>Hạn mức công nợ tối đa (VNĐ)</label>
+            <input type="number" min="0" id="invNewCustLimit" class="form-control" value="10000000" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Địa chỉ</label>
+          <input type="text" id="invNewCustAddress" class="form-control" placeholder="Địa chỉ (nếu có)" />
         </div>
       </div>
 
@@ -2727,12 +2796,13 @@ async function openCreateInvoiceModal() {
 function getSerialChipsHtml(productId) {
   const list = cachedAvailableSerials.filter((s) => Number(s.product_id) === Number(productId));
   if (!list.length) return '<span style="font-size:11px; color:#94a3b8;">Chưa có S/N sẵn trong kho (nhập tay nếu có)</span>';
-  return list
+  const chips = list
     .map(
       (s) =>
-        `<button type="button" class="btn btn-outline btn-sm" style="padding:1px 6px; font-size:11px; margin:2px 2px 0 0;" onclick="pickInvoiceSerial(this, '${s.serial_number}')">+ ${s.serial_number}</button>`
+        `<button type="button" class="btn btn-outline btn-sm" style="padding:1px 6px; font-size:11px;" onclick="pickInvoiceSerial(this, '${s.serial_number}')">+ ${s.serial_number}</button>`
     )
     .join('');
+  return `<div style="max-height:78px; overflow-y:auto; display:flex; flex-wrap:wrap; gap:3px; padding:2px 2px 2px 0;">${chips}</div>`;
 }
 
 function pickInvoiceSerial(btn, sn, selector = '.inv-serials') {
@@ -2754,6 +2824,7 @@ function addInvoiceRow() {
   const firstProdId = cachedProducts[0]?.product_id || 0;
   tr.innerHTML = `
     <td>
+      <input type="text" class="form-control inv-prod-search" style="margin-bottom:5px; font-size:12px; padding:5px 8px;" placeholder="🔍 Gõ SKU / tên để lọc..." oninput="filterInvoiceProdSelect(this)" />
       <select class="form-control inv-prod" onchange="onInvoiceProdChange(this)">
         ${cachedProducts.map((p) => `<option value="${p.product_id}" data-price="${p.sale_price}" data-stock="${p.stock_qty}">${p.sku} - ${p.product_name} (Tồn: ${p.stock_qty})</option>`).join('')}
       </select>
@@ -2803,9 +2874,42 @@ function calcInvoiceTotals() {
 }
 
 function updateInvoiceDebtPreview() {
-  const paid = Number(document.getElementById('invPaid').value || 0);
+  const paidEl = document.getElementById('invPaid');
+  const methodEl = document.getElementById('invMethod');
+  const paid = Number(paidEl?.value || 0);
+  if (paid > 0 && methodEl && methodEl.value === 'CongNo') {
+    methodEl.value = 'TienMat';
+  }
   const debt = Math.max(0, currentInvoiceTotal - paid);
   document.getElementById('invDebtPreview').textContent = formatVND(debt);
+  checkInvoiceWalkinRule();
+}
+
+function filterInvoiceCustSelect(input) {
+  const sel = document.getElementById('invCustomer');
+  if (!sel) return;
+  const kw = (input.value || '').trim().toLowerCase();
+  const filtered = kw
+    ? cachedCustomers.filter(
+        (c) => (c.customer_name || '').toLowerCase().includes(kw) || (c.phone || '').toLowerCase().includes(kw)
+      )
+    : cachedCustomers;
+  sel.innerHTML =
+    filtered.map((c) => `<option value="${c.customer_id}">${c.customer_name} (${c.phone})</option>`).join('') +
+    '<option value="__NEW__">➕ Thêm khách hàng mới...</option>';
+  onInvoiceCustChange();
+}
+
+function onInvoiceCustChange() {
+  const sel = document.getElementById('invCustomer');
+  const box = document.getElementById('invNewCustomerBox');
+  if (!sel || !box) return;
+  const isNew = sel.value === '__NEW__';
+  box.style.display = isNew ? 'block' : 'none';
+  const nameEl = document.getElementById('invNewCustName');
+  const phoneEl = document.getElementById('invNewCustPhone');
+  if (nameEl) nameEl.required = isNew;
+  if (phoneEl) phoneEl.required = isNew;
   checkInvoiceWalkinRule();
 }
 
@@ -2815,7 +2919,7 @@ function checkInvoiceWalkinRule() {
   const paidEl = document.getElementById('invPaid');
   const warnEl = document.getElementById('invWalkinWarn');
   if (!custEl || !methodEl || !paidEl || !warnEl) return;
-  const isWalkin = Number(custEl.value) === 1;
+  const isWalkin = custEl.value !== '__NEW__' && Number(custEl.value) === 1;
   const hasDebt = methodEl.value === 'CongNo' || Math.max(0, currentInvoiceTotal - Number(paidEl.value || 0)) > 0;
   warnEl.style.display = isWalkin && hasDebt ? 'block' : 'none';
 }
@@ -2825,10 +2929,11 @@ async function submitInvoice(e) {
   const rows = [...document.querySelectorAll('#invItemsBody tr')];
   if (rows.length === 0) return showToast('Vui lòng thêm ít nhất 1 dòng hàng.', 'error');
 
-  const customerId = Number(document.getElementById('invCustomer').value);
+  const rawCustVal = document.getElementById('invCustomer').value;
+  let customerId = rawCustVal === '__NEW__' ? 0 : Number(rawCustVal);
   const method = document.getElementById('invMethod').value;
   const paidAmount = Number(document.getElementById('invPaid').value || 0);
-  if (customerId === 1 && (method === 'CongNo' || paidAmount < currentInvoiceTotal)) {
+  if (rawCustVal !== '__NEW__' && customerId === 1 && (method === 'CongNo' || paidAmount < currentInvoiceTotal)) {
     return showToast('Khách lẻ tại quầy (#1) bắt buộc thanh toán đủ 100%, không được ghi nợ.', 'error');
   }
 
@@ -2843,6 +2948,30 @@ async function submitInvoice(e) {
   }));
 
   try {
+    if (rawCustVal === '__NEW__') {
+      const custName = (document.getElementById('invNewCustName')?.value || '').trim();
+      const custPhone = (document.getElementById('invNewCustPhone')?.value || '').trim();
+      const custGroup = document.getElementById('invNewCustGroup')?.value || 'KhachLe';
+      const custEmail = (document.getElementById('invNewCustEmail')?.value || '').trim();
+      const custTax = (document.getElementById('invNewCustTax')?.value || '').trim();
+      const rawLimit = document.getElementById('invNewCustLimit')?.value;
+      const custLimit = rawLimit !== undefined && rawLimit !== '' ? Number(rawLimit) : 10000000;
+      const custAddress = (document.getElementById('invNewCustAddress')?.value || '').trim();
+      const createdCust = await apiFetch('/api/customers', {
+        method: 'POST',
+        body: JSON.stringify({
+          customer_name: custName,
+          phone: custPhone,
+          customer_group: custGroup,
+          email: custEmail,
+          tax_code: custTax,
+          address: custAddress,
+          credit_limit: custLimit,
+        }),
+      });
+      customerId = createdCust.customer_id;
+    }
+
     await apiFetch('/api/invoices', {
       method: 'POST',
       body: JSON.stringify({
@@ -2893,7 +3022,7 @@ async function renderInventoryTab(q = '', status = 'all') {
     <div class="panel" style="margin-bottom:20px;">
       <div class="toolbar" style="flex-wrap:wrap; gap:10px;">
         <div class="search-box">
-          <input type="text" id="invtSearch" class="form-control" placeholder="Tìm theo SKU, tên linh kiện, vị trí kệ..." value="${q}" />
+          <input type="text" id="invtSearch" class="form-control" placeholder="Tìm theo SKU, tên linh kiện, vị trí kệ..." value="${q}" onkeydown="if(event.key==='Enter') renderInventoryTab(this.value, document.getElementById('invtStatus').value)" />
           <select id="invtStatus" class="form-control" style="max-width:170px;" onchange="renderInventoryTab(document.getElementById('invtSearch').value, this.value)">
             <option value="all" ${status === 'all' ? 'selected' : ''}>Tất cả tồn kho</option>
             <option value="low" ${status === 'low' ? 'selected' : ''}>Sắp hết hàng</option>
@@ -2949,7 +3078,7 @@ async function renderInventoryTab(q = '', status = 'all') {
   const [allStockForMap, stockRows, moves, allPurchases, pendingReturns] = await Promise.all([
     apiFetch('/api/products'),
     apiFetch(`/api/inventory?q=${encodeURIComponent(q)}&status=${status}`),
-    apiFetch('/api/inventory/movements'),
+    apiFetch(`/api/inventory/movements?q=${encodeURIComponent(q)}`),
     canConfirmWh ? apiFetch('/api/purchases').catch(() => []) : Promise.resolve([]),
     canConfirmWh ? apiFetch('/api/invoices/pending-returns').catch(() => []) : Promise.resolve([]),
   ]);
@@ -3387,12 +3516,14 @@ async function quickPurchaseProduct(productId) {
 // ============================================================================
 // 9. MODULE KIỂM KÊ KHO (STOCKTAKE)
 // ============================================================================
+let cachedStockAdjustments = [];
+
 async function renderStocktakeTab(q = '') {
   document.getElementById('tab-dynamic').innerHTML = `
     <div class="panel">
       <div class="toolbar">
         <div class="search-box">
-          <input type="text" id="stSearch" class="form-control" placeholder="Tìm theo số phiếu KK, SKU, tên linh kiện, lý do..." value="${q}" />
+          <input type="text" id="stSearch" class="form-control" placeholder="Tìm theo số phiếu KK, SKU, tên linh kiện, lý do..." value="${q}" onkeydown="if(event.key==='Enter') renderStocktakeTab(this.value)" />
           <button class="btn btn-outline" onclick="renderStocktakeTab(document.getElementById('stSearch').value)">Tìm</button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -3413,14 +3544,16 @@ async function renderStocktakeTab(q = '') {
               <th class="text-right">Chênh lệch</th>
               <th>Lý do điều chỉnh</th>
               <th>Người kiểm</th>
+              <th class="text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody id="stBody"><tr><td colspan="9">Đang tải...</td></tr></tbody>
+          <tbody id="stBody"><tr><td colspan="10">Đang tải...</td></tr></tbody>
         </table>
       </div>
     </div>`;
 
   const rows = await apiFetch(`/api/inventory/adjustments?q=${encodeURIComponent(q)}`);
+  cachedStockAdjustments = rows;
   document.getElementById('stBody').innerHTML = rows.length
     ? rows
         .map((r) => {
@@ -3438,10 +3571,74 @@ async function renderStocktakeTab(q = '') {
             <td class="text-right"><strong style="color:${diffColor}">${diffStr}</strong></td>
             <td>${r.reason || '---'}</td>
             <td>${r.staff_name}</td>
+            <td class="text-right"><button class="btn btn-outline btn-sm" onclick="printStocktakeVoucher(${r.adjustment_id})">🖨️ In</button></td>
           </tr>`;
         })
         .join('')
-    : '<tr><td colspan="9">Chưa có phiếu kiểm kê kho nào. Bấm "+ Lập phiếu kiểm kho mới" để cân bằng tồn kho.</td></tr>';
+    : '<tr><td colspan="10">Chưa có phiếu kiểm kê kho nào. Bấm "+ Lập phiếu kiểm kho mới" để cân bằng tồn kho.</td></tr>';
+}
+
+function printStocktakeVoucher(id) {
+  const r = cachedStockAdjustments.find((x) => Number(x.adjustment_id) === Number(id));
+  if (!r) return showToast('Không tìm thấy dữ liệu phiếu kiểm kho.', 'error');
+  const diff = Number(r.diff_qty);
+  const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+  const win = window.open('', '_blank', 'width=850,height=650');
+  win.document.write(`
+    <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>Phiếu Kiểm Kho ${r.adjustment_no}</title>
+    <style>
+      body { font-family: 'Times New Roman', serif; padding: 30px; color: #000; }
+      .head { display: flex; justify-content: space-between; margin-bottom: 18px; }
+      h2 { text-align: center; margin: 10px 0 4px; text-transform: uppercase; }
+      .sub { text-align: center; font-style: italic; margin-bottom: 18px; font-size: 13px; }
+      table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+      th, td { border: 1px solid #333; padding: 7px 9px; }
+      th { background: #f1f5f9; }
+      .right { text-align: right; }
+      .center { text-align: center; }
+      .sigs { display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; margin-top: 38px; font-size: 13px; }
+    </style></head><body>
+    <div class="head">
+      <div><strong>CỬA HÀNG LINH KIỆN FAST COMPUTER</strong><br>Showroom: Hà Nội | MST: 0108889990</div>
+      <div><strong>Mẫu số 05 - VT</strong><br>Số phiếu: <strong>${r.adjustment_no}</strong></div>
+    </div>
+    <h2>BIÊN BẢN KIỂM KÊ / PHIẾU ĐIỀU CHỈNH KHO</h2>
+    <div class="sub">Thời gian kiểm: ${formatDate(r.adjusted_at)}</div>
+    <p><strong>Người thực hiện kiểm kê:</strong> ${r.staff_name}</p>
+    <p><strong>Lý do điều chỉnh:</strong> ${r.reason || 'Kiểm kê định kỳ'}</p>
+    <table>
+      <thead>
+        <tr>
+          <th class="center">STT</th>
+          <th>Mã SKU</th>
+          <th>Tên linh kiện</th>
+          <th class="center">ĐVT</th>
+          <th class="right">Tồn phần mềm</th>
+          <th class="right">Thực tế đếm</th>
+          <th class="right">Chênh lệch</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="center">1</td>
+          <td>${r.sku}</td>
+          <td><strong>${r.product_name}</strong></td>
+          <td class="center">${r.unit}</td>
+          <td class="right">${r.system_qty}</td>
+          <td class="right"><strong>${r.actual_qty}</strong></td>
+          <td class="right"><strong>${diffStr}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="sigs">
+      <div><strong>Người kiểm kho (Thủ kho)</strong><br><em>(Ký, họ tên)</em><br><br><br>${r.staff_name}</div>
+      <div><strong>Kế toán kho</strong><br><em>(Ký, họ tên)</em></div>
+      <div><strong>Giám đốc / Quản lý duyệt</strong><br><em>(Ký, họ tên)</em></div>
+    </div>
+    <script>window.onload = () => window.print();</script>
+    </body></html>
+  `);
+  win.document.close();
 }
 
 // ============================================================================
@@ -3452,7 +3649,7 @@ async function renderFinanceTab(q = '', type = '', method = '', from = '', to = 
     <div class="panel">
       <div class="toolbar" style="flex-wrap:wrap; gap:8px;">
         <div class="search-box" style="flex-wrap:wrap; gap:8px;">
-          <input type="text" id="finSearch" class="form-control" style="min-width:200px;" placeholder="Tìm số phiếu PT/PC, ghi chú, người lập..." value="${q}" />
+          <input type="text" id="finSearch" class="form-control" style="min-width:200px;" placeholder="Tìm số phiếu PT/PC, ghi chú, người lập..." value="${q}" onkeydown="if(event.key==='Enter') applyFinanceFilter()" />
           <select id="finType" class="form-control" style="width:130px;" onchange="applyFinanceFilter()">
             <option value="" ${type === '' ? 'selected' : ''}>Tất cả Thu/Chi</option>
             <option value="Thu" ${type === 'Thu' ? 'selected' : ''}>Phiếu Thu</option>
@@ -3620,7 +3817,7 @@ async function renderWarrantyTab(q = '', status = '') {
     <div class="panel">
       <div class="toolbar">
         <div class="search-box">
-          <input type="text" id="warSearch" class="form-control" style="min-width:260px;" placeholder="Tra cứu Serial (S/N), SKU, Số HĐ, Tên/SĐT khách..." value="${q}" />
+          <input type="text" id="warSearch" class="form-control" style="min-width:260px;" placeholder="Tra cứu Serial (S/N), SKU, Số HĐ, Tên/SĐT khách..." value="${q}" onkeydown="if(event.key==='Enter') applyWarrantyFilter()" />
           <select id="warStatus" class="form-control" style="width:170px;" onchange="applyWarrantyFilter()">
             <option value="" ${status === '' ? 'selected' : ''}>Tất cả trạng thái</option>
             <option value="DaBan" ${status === 'DaBan' ? 'selected' : ''}>Đã bán (Đang BH)</option>

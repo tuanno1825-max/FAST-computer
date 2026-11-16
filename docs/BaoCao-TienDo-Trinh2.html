@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Báo cáo Tiến độ Trình 2 - FAST Computer</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 18mm 16mm 18mm 18mm;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+    }
+    .page-break { page-break-before: always; break-before: page; }
+    .avoid-break { page-break-inside: avoid; break-inside: avoid; }
+
+    /* Cover Page */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 248mm;
+      border: 2px solid #1e3a8a;
+      border-radius: 10px;
+      padding: 14mm 14mm;
+      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 35%, #eff6ff 100%);
+      text-align: center;
+    }
+    .cover-top { font-size: 12pt; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cover-subtop { font-size: 11pt; color: #475569; margin-top: 6px; }
+    .cover-badge {
+      display: inline-block;
+      margin: 18px auto 10px;
+      padding: 6px 18px;
+      background: #1d4ed8;
+      color: #ffffff;
+      border-radius: 20px;
+      font-size: 10.5pt;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+    }
+    .cover-title {
+      font-size: 22pt;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 10px 0 8px;
+      line-height: 1.3;
+    }
+    .cover-subtitle {
+      font-size: 13pt;
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: 18px;
+    }
+    .cover-box {
+      text-align: left;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-left: 5px solid #1d4ed8;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 12px 0;
+    }
+    .cover-box h4 { margin: 0 0 8px; color: #1e3a8a; font-size: 11pt; }
+    .cover-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+    .cover-table th, .cover-table td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    .cover-table th { background: #f1f5f9; color: #0f172a; }
+    .cover-footer { font-size: 10.5pt; color: #334155; font-weight: 600; }
+
+    /* Headings */
+    h1 {
+      font-size: 16pt;
+      color: #1e3a8a;
+      border-bottom: 2.5px solid #1d4ed8;
+      padding-bottom: 6px;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+    }
+    h2 {
+      font-size: 12.5pt;
+      color: #0f172a;
+      margin: 14px 0 6px;
+      border-left: 4px solid #2563eb;
+      padding-left: 8px;
+    }
+    h3 { font-size: 11pt; color: #1e40af; margin: 10px 0 4px; }
+    p { margin: 0 0 8px; text-align: justify; }
+    ul, ol { margin: 4px 0 10px 20px; padding: 0; }
+    li { margin-bottom: 4px; text-align: justify; }
+
+    /* Tables */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 9.8pt;
+    }
+    table.data-table th {
+      background: #1e3a8a;
+      color: #ffffff;
+      font-weight: 600;
+      padding: 6px 8px;
+      border: 1px solid #1e3a8a;
+      text-align: left;
+    }
+    table.data-table td {
+      padding: 5.5px 8px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+    }
+    table.data-table tr:nth-child(even) td { background: #f8fafc; }
+
+    /* Info boxes */
+    .callout {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-left: 4px solid #0284c7;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 10px 0;
+    }
+    .callout-warn {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #d97706;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 10px 0;
+    }
+
+    /* TOC */
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted #94a3b8;
+      padding: 6px 0;
+      font-size: 11pt;
+    }
+    .toc-item.major { font-weight: 700; color: #0f172a; margin-top: 6px; }
+    .toc-item.minor { padding-left: 18px; color: #334155; font-size: 10.5pt; }
+
+    /* Screenshots */
+    .shot-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 12px;
+      background: #ffffff;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .shot-card img {
+      width: 100%;
+      max-height: 98mm;
+      object-fit: contain;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      display: block;
+    }
+    .shot-card.tall img {
+      max-height: 125mm;
+    }
+    .shot-title {
+      font-weight: 700;
+      color: #1e3a8a;
+      font-size: 10.2pt;
+      margin-top: 6px;
+    }
+    .shot-desc {
+      font-size: 9.5pt;
+      color: #475569;
+      margin-top: 2px;
+    }
+    .erd-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px;
+      background: #ffffff;
+      text-align: center;
+      margin: 8px 0;
+    }
+    .erd-box img {
+      width: 100%;
+      max-height: 155mm;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TRANG 1: BÌA -->
+  <div class="cover">
+    <div>
+      <div class="cover-top">Học phần: Ứng dụng tin học trong kế toán</div>
+      <div class="cover-subtop">Báo cáo Tiến độ Thực hiện Dự án — Giai đoạn Trình 2</div>
+    </div>
+
+    <div>
+      <div class="cover-badge">BÁO CÁO TIẾN ĐỘ (TRÌNH 2)</div>
+      <div class="cover-title">HỆ THỐNG QUẢN LÝ CỬA HÀNG LINH KIỆN MÁY TÍNH &amp; KẾ TOÁN SME</div>
+      <div class="cover-subtitle">Tên hệ thống: FAST COMPUTER</div>
+
+      <div class="cover-box">
+        <h4>Danh sách thành viên nhóm thực hiện &amp; Phân công vai trò trên hệ thống:</h4>
+        <table class="cover-table">
+          <thead>
+            <tr><th>STT</th><th>Họ và tên</th><th>Vai trò trong nhóm &amp; Tài khoản</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><strong>Nguyễn Đức Dương</strong></td><td>Nhóm trưởng — Quản lý chung &amp; Quản trị hệ thống (Admin)</td></tr>
+            <tr><td>2</td><td><strong>Phạm Khánh Linh</strong></td><td>Kế toán viên — Phụ trách Thu/Chi, Công nợ &amp; Báo cáo</td></tr>
+            <tr><td>3</td><td><strong>Phạm Thanh Bình</strong></td><td>Kế toán viên — Phụ trách Nhập hàng, Giá vốn &amp; Đối chiếu sổ sách</td></tr>
+            <tr><td>4</td><td><strong>Phạm Anh Tuấn</strong></td><td>Thủ kho &amp; Kỹ thuật — Phụ trách Sơ đồ kho, Nhập/Xuất &amp; Đổi trả</td></tr>
+            <tr><td>5</td><td><strong>Nguyễn Thanh Sơn Trung</strong></td><td>Nhân viên Bán hàng — Phụ trách Tư vấn, Lập hóa đơn &amp; Bảo hành</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cover-box" style="border-left-color: #059669;">
+        <h4>Địa chỉ triển khai thực tế:</h4>
+        <p style="margin:0; font-size:10pt;">• <strong>Trang bán hàng &amp; Quản trị trực tuyến:</strong> https://fast-computer.onrender.com</p>
+        <p style="margin:2px 0 0; font-size:10pt;">• <strong>Mã nguồn dự án (GitHub):</strong> https://github.com/tuanno1825-max/FAST-computer</p>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      Tháng 11 / 2026
+    </div>
+  </div>
+
+  <!-- TRANG 2: MỤC LỤC -->
+  <div class="page-break">
+    <h1>Mục lục</h1>
+    <div class="toc-item major"><span>1. Giới thiệu đề tài</span><span>Phần 1</span></div>
+    <div class="toc-item minor"><span>1.1. Bối cảnh và nhu cầu thực tế</span><span></span></div>
+    <div class="toc-item minor"><span>1.2. Mục tiêu và đối tượng sử dụng hệ thống</span><span></span></div>
+    <div class="toc-item minor"><span>1.3. Phạm vi hoàn thành ở giai đoạn Trình 2</span><span></span></div>
+
+    <div class="toc-item major"><span>2. Kiến trúc hệ thống</span><span>Phần 2</span></div>
+    <div class="toc-item minor"><span>2.1. Mô hình kiến trúc tổng thể 3 tầng</span><span></span></div>
+    <div class="toc-item minor"><span>2.2. Công nghệ và hạ tầng triển khai trực tuyến</span><span></span></div>
+    <div class="toc-item minor"><span>2.3. Ma trận phân quyền theo vai trò kế toán - kho - bán hàng</span><span></span></div>
+
+    <div class="toc-item major"><span>3. Cơ sở dữ liệu (Database)</span><span>Phần 3</span></div>
+    <div class="toc-item minor"><span>3.1. Sơ đồ quan hệ thực thể (ERD) 12 bảng chuẩn 3NF</span><span></span></div>
+    <div class="toc-item minor"><span>3.2. Mô tả chi tiết cấu trúc 12 bảng dữ liệu</span><span></span></div>
+
+    <div class="toc-item major"><span>4. Ảnh giao diện hệ thống thực tế</span><span>Phần 4</span></div>
+    <div class="toc-item minor"><span>4.1. Giao diện Khách hàng (Trang bán hàng &amp; Đăng nhập)</span><span></span></div>
+    <div class="toc-item minor"><span>4.2. Giao diện Quản trị Kho &amp; Sản phẩm (Sơ đồ kho 2D)</span><span></span></div>
+    <div class="toc-item minor"><span>4.3. Giao diện Bán hàng, Nhập hàng &amp; Kế toán Tài chính</span><span></span></div>
+
+    <div class="toc-item major"><span>5. Các chức năng đã hoàn thành</span><span>Phần 5</span></div>
+    <div class="toc-item major"><span>6. Các chức năng chưa hoàn thành</span><span>Phần 6</span></div>
+    <div class="toc-item major"><span>7. Khó khăn gặp phải trong quá trình thực hiện</span><span>Phần 7</span></div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <strong>Tóm tắt trạng thái dự án ở mốc Trình 2:</strong><br/>
+      Hệ thống <strong>FAST Computer</strong> đã hoàn thiện toàn bộ luồng nghiệp vụ cốt lõi từ bán hàng trực tuyến, bán hàng tại quầy, nhập hàng nhà cung cấp, quản lý vị trí kho 2D, kiểm soát đổi trả hàng, thu chi công nợ (TK 131 / TK 331) đến báo cáo lợi nhuận. Hệ thống đã được đưa lên môi trường mạng thực tế cùng cơ sở dữ liệu đám mây để cả 5 thành viên kiểm thử đồng thời.
+    </div>
+  </div>
+
+  <!-- TRANG 3-4: GIỚI THIỆU -->
+  <div class="page-break">
+    <h1>1. Giới thiệu đề tài</h1>
+
+    <h2>1.1. Bối cảnh và nhu cầu thực tế</h2>
+    <p>
+      Cửa hàng kinh doanh linh kiện máy tính (CPU, card đồ họa VGA, bo mạch chủ, RAM, ổ cứng SSD, nguồn, màn hình...) có đặc thù hàng hóa rất khác biệt so với các cửa hàng tạp hóa thông thường. Mỗi loại linh kiện có hàng chục mã hàng (SKU) gần giống nhau, giá trị đơn chiếc cao, thời hạn bảo hành từ 12 đến 36 tháng theo từng mã Serial riêng biệt, và giá nhập từ nhà cung cấp biến động liên tục theo thị trường.
+    </p>
+    <p>
+      Nếu chỉ quản lý bằng sổ sách giấy hoặc bảng tính rời rạc, cửa hàng rất dễ gặp các sai sót nghiêm trọng: không biết chính xác món hàng đang nằm ở kệ nào trong kho, bán nhầm hàng đã hết hoặc xuất sai giá vốn, quên theo dõi công nợ khách hàng doanh nghiệp/phòng net (Tài khoản 131) và công nợ phải trả nhà cung cấp (Tài khoản 331), hoặc thất thoát khi xử lý hàng khách trả lại.
+    </p>
+    <p>
+      Xuất phát từ bài toán thực tế đó, nhóm đã thiết kế và xây dựng hệ thống phần mềm <strong>FAST Computer</strong> — kết hợp giữa trang web bán hàng trực tuyến cho khách và hệ thống quản lý bán hàng, kho vận, kế toán nội bộ dành cho doanh nghiệp vừa và nhỏ (SME).
+    </p>
+
+    <h2>1.2. Mục tiêu của hệ thống</h2>
+    <ul>
+      <li><strong>Chuẩn hóa quy trình bán hàng đa kênh:</strong> Hỗ trợ khách hàng xem tồn kho thật và đặt mua trực tiếp trên website (thanh toán chuyển khoản qua mã QR hoặc tiền mặt khi nhận hàng), đồng thời nhân viên bán tại quầy có thể lập hóa đơn VAT nhanh chóng.</li>
+      <li><strong>Kiểm soát kho và vị trí lưu trữ trực quan:</strong> Xây dựng sơ đồ mặt bằng kho 2D chia theo từng dãy, kệ và ô chứa hàng, giúp thủ kho tìm hàng nhanh và kiểm soát chặt chẽ quy trình nhập kho, kiểm kê, đổi trả.</li>
+      <li><strong>Tự động hóa hạch toán kế toán cơ bản:</strong> Tự động tính giá vốn bình quân gia quyền sau mỗi lần nhập hàng, theo dõi chi tiết Sổ quỹ Thu – Chi, công nợ phải thu khách hàng, công nợ phải trả nhà cung cấp và tổng hợp báo cáo lãi gộp.</li>
+      <li><strong>Phân quyền rõ ràng, chống gian lận nội bộ:</strong> Tách bạch quyền hạn giữa Quản lý, Kế toán, Nhân viên bán hàng và Thủ kho theo đúng nguyên tắc kiểm soát nội bộ trong kế toán.</li>
+    </ul>
+
+    <h2>1.3. Đối tượng sử dụng và phạm vi Trình 2</h2>
+    <table class="data-table">
+      <thead>
+        <tr><th style="width:24%">Đối tượng</th><th style="width:76%">Nhiệm vụ chính trên hệ thống FAST Computer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Khách mua hàng</strong></td><td>Xem danh mục 52 linh kiện kèm giá và tình trạng còn hàng, đặt mua trực tuyến, nhận hướng dẫn thanh toán chuyển khoản QR hoặc COD.</td></tr>
+        <tr><td><strong>Quản lý (Admin)</strong></td><td>Giám sát toàn bộ hoạt động kinh doanh, xem báo cáo tài chính, quản lý tài khoản nhân viên và phân quyền.</td></tr>
+        <tr><td><strong>Kế toán viên</strong></td><td>Quản lý nhập hàng, thu tiền đơn online, thu/chi công nợ khách hàng và nhà cung cấp, hoàn tiền đơn trả hàng, xem báo cáo doanh thu – giá vốn – lợi nhuận.</td></tr>
+        <tr><td><strong>Nhân viên Bán hàng</strong></td><td>Tư vấn khách hàng, lập hóa đơn bán tại quầy (chặn bán dưới giá vốn), theo dõi tình trạng hóa đơn và kích hoạt bảo hành theo mã Serial.</td></tr>
+        <tr><td><strong>Thủ kho &amp; Kỹ thuật</strong></td><td>Xác nhận hàng nhập từ nhà cung cấp lên kệ, sắp xếp sơ đồ kho 2D, kiểm nhận hàng khách trả lại (còn tốt hay lỗi), thực hiện kiểm kê cân bằng kho.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TRANG 5-6: KIẾN TRÚC HỆ THỐNG -->
+  <div class="page-break">
+    <h1>2. Kiến trúc hệ thống</h1>
+
+    <h2>2.1. Mô hình kiến trúc 3 tầng</h2>
+    <p>
+      Hệ thống FAST Computer được tổ chức theo mô hình kiến trúc 3 tầng rõ ràng nhằm đảm bảo tính bảo mật dữ liệu kế toán, dễ bảo trì và có thể truy cập mọi lúc qua trình duyệt web trên máy tính hoặc điện thoại:
+    </p>
+
+    <div class="avoid-break" style="margin: 10px 0;">
+      <svg viewBox="0 0 760 220" width="100%" style="border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc;">
+        <rect x="20" y="25" width="210" height="170" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <text x="125" y="52" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a8a">TẦNG 1: GIAO DIỆN WEB</text>
+        <text x="125" y="72" text-anchor="middle" font-size="11" fill="#334155">(Client / Trình duyệt)</text>
+        <rect x="35" y="88" width="180" height="38" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+        <text x="125" y="111" text-anchor="middle" font-size="11" fill="#0f172a">Trang Bán hàng Online</text>
+        <rect x="35" y="136" width="180" height="44" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+        <text x="125" y="156" text-anchor="middle" font-size="11" fill="#0f172a">Trang Quản trị &amp; Kế toán</text>
+        <text x="125" y="172" text-anchor="middle" font-size="10" fill="#475569">(Dashboard, Kho 2D, Báo cáo)</text>
+
+        <line x1="230" y1="110" x2="275" y2="110" stroke="#1d4ed8" stroke-width="2.5"/>
+        <polygon points="275,110 266,105 266,115" fill="#1d4ed8"/>
+
+        <rect x="275" y="25" width="215" height="170" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="382" y="52" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">TẦNG 2: XỬ LÝ NGHIỆP VỤ</text>
+        <text x="382" y="72" text-anchor="middle" font-size="11" fill="#334155">(Máy chủ Node.js / Express)</text>
+        <rect x="290" y="88" width="185" height="28" rx="5" fill="#ffffff" stroke="#86efac"/>
+        <text x="382" y="106" text-anchor="middle" font-size="10.5" fill="#0f172a">Kiểm tra Đăng nhập &amp; Phân quyền</text>
+        <rect x="290" y="122" width="185" height="28" rx="5" fill="#ffffff" stroke="#86efac"/>
+        <text x="382" y="140" text-anchor="middle" font-size="10.5" fill="#0f172a">Tính Giá vốn, VAT &amp; Công nợ</text>
+        <rect x="290" y="156" width="185" height="28" rx="5" fill="#ffffff" stroke="#86efac"/>
+        <text x="382" y="174" text-anchor="middle" font-size="10.5" fill="#0f172a">Khóa giao dịch chống âm kho</text>
+
+        <line x1="490" y1="110" x2="535" y2="110" stroke="#16a34a" stroke-width="2.5"/>
+        <polygon points="535,110 526,105 526,115" fill="#16a34a"/>
+
+        <rect x="535" y="25" width="205" height="170" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+        <text x="637" y="52" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">TẦNG 3: CƠ SỞ DỮ LIỆU</text>
+        <text x="637" y="72" text-anchor="middle" font-size="11" fill="#334155">(PostgreSQL trên Neon Cloud)</text>
+        <rect x="550" y="88" width="175" height="42" rx="6" fill="#ffffff" stroke="#fcd34d"/>
+        <text x="637" y="107" text-anchor="middle" font-size="11" fill="#0f172a">12 Bảng dữ liệu chuẩn 3NF</text>
+        <text x="637" y="122" text-anchor="middle" font-size="10" fill="#475569">(Múi giờ Việt Nam +07:00)</text>
+        <rect x="550" y="138" width="175" height="42" rx="6" fill="#ffffff" stroke="#fcd34d"/>
+        <text x="637" y="157" text-anchor="middle" font-size="11" fill="#0f172a">Lưu trữ ảnh &amp; Sao lưu</text>
+        <text x="637" y="172" text-anchor="middle" font-size="10" fill="#475569">(Chống mất dữ liệu)</text>
+      </svg>
+    </div>
+
+    <h2>2.2. Công nghệ và hạ tầng triển khai</h2>
+    <ul>
+      <li><strong>Giao diện người dùng:</strong> Thiết kế bằng HTML5, CSS3 và JavaScript thuần, hiển thị gọn gàng trên cả màn hình máy tính và điện thoại, tích hợp biểu đồ trực quan và sơ đồ kho 2D.</li>
+      <li><strong>Máy chủ xử lý:</strong> Chạy trên nền tảng Node.js và Express, xử lý toàn bộ quy tắc kiểm tra tồn kho, hạn mức công nợ, mã hóa mật khẩu nhân viên và tách riêng quyền truy cập từng chức năng.</li>
+      <li><strong>Cơ sở dữ liệu đám mây:</strong> Sử dụng hệ quản trị PostgreSQL lưu trữ trên dịch vụ Neon Cloud (khu vực Singapore), đồng bộ múi giờ Việt Nam để ngày giờ trên hóa đơn, phiếu thu chi hiển thị chính xác.</li>
+      <li><strong>Triển khai trực tuyến:</strong> Mã nguồn được quản lý trên GitHub và tự động đưa lên dịch vụ Render tại địa chỉ <em>https://fast-computer.onrender.com</em>.</li>
+    </ul>
+
+    <h2>2.3. Ma trận phân quyền kiểm soát nội bộ</h2>
+    <p>Hệ thống áp dụng kiểm soát quyền hạn chặt chẽ ngay cả ở giao diện lẫn tầng xử lý máy chủ để đảm bảo tính trung thực của số liệu kế toán:</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:32%">Chức năng nghiệp vụ</th>
+          <th style="width:17%; text-align:center">Admin</th>
+          <th style="width:17%; text-align:center">Kế toán</th>
+          <th style="width:17%; text-align:center">Bán hàng</th>
+          <th style="width:17%; text-align:center">Thủ kho</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Quản lý Nhân viên &amp; Phân quyền</td><td align="center">Toàn quyền</td><td align="center">—</td><td align="center">—</td><td align="center">—</td></tr>
+        <tr><td>Lập Hóa đơn bán hàng &amp; Bảo hành</td><td align="center">✓</td><td align="center">✓</td><td align="center">✓ (Chặn bán lỗ)</td><td align="center">Chỉ xem</td></tr>
+        <tr><td>Thu tiền đơn Online &amp; Công nợ (PT)</td><td align="center">✓</td><td align="center">✓</td><td align="center">—</td><td align="center">—</td></tr>
+        <tr><td>Nhập hàng &amp; Trả nợ Nhà cung cấp</td><td align="center">✓</td><td align="center">✓</td><td align="center">—</td><td align="center">Tạo phiếu nhập</td></tr>
+        <tr><td>Duyệt hàng lên kệ &amp; Xếp sơ đồ Kho 2D</td><td align="center">✓</td><td align="center">—</td><td align="center">—</td><td align="center">✓</td></tr>
+        <tr><td>Kiểm nhận hàng trả lại &amp; Kiểm kê kho</td><td align="center">✓</td><td align="center">Chỉ xem</td><td align="center">—</td><td align="center">✓</td></tr>
+        <tr><td>Chi tiền hoàn trả khách (PC) &amp; Báo cáo lãi</td><td align="center">✓</td><td align="center">✓</td><td align="center">—</td><td align="center">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TRANG 7: ERD -->
+  <div class="page-break">
+    <h1>3. Cơ sở dữ liệu (Database)</h1>
+    <h2>3.1. Sơ đồ quan hệ thực thể (ERD) — 12 bảng chuẩn 3NF</h2>
+    <p>
+      Cơ sở dữ liệu của FAST Computer được thiết kế theo chuẩn chuẩn hóa 3NF gồm <strong>12 bảng</strong> liên kết chặt chẽ với nhau qua khóa chính và khóa ngoại, đảm bảo mọi phát sinh nhập, xuất, thu, chi đều có thể truy vết đầy đủ từ chứng từ gốc.
+    </p>
+    <div class="erd-box">
+      <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/FAST-Computer-ERD.png" alt="Sơ đồ ERD 12 bảng FAST Computer" />
+      <div class="shot-title" style="margin-top:8px;">Hình 3.1: Sơ đồ Cơ sở dữ liệu (ERD) 12 bảng của hệ thống FAST Computer</div>
+    </div>
+    <div class="callout">
+      <strong>Các quy tắc toàn vẹn dữ liệu quan trọng đã thiết lập trong cơ sở dữ liệu:</strong>
+      <ul style="margin-bottom:0;">
+        <li>Số lượng tồn kho của sản phẩm luôn phải lớn hơn hoặc bằng 0 (không cho phép xuất âm kho).</li>
+        <li>Giá nhập, giá bán, tổng tiền hóa đơn và công nợ đều được ràng buộc không âm.</li>
+        <li>Mỗi sản phẩm có một mã SKU duy nhất; mỗi nhân viên có tên đăng nhập duy nhất; mỗi khách hàng định danh bằng số điện thoại duy nhất; mỗi linh kiện bảo hành có một mã Serial duy nhất.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TRANG 8-9: CHI TIẾT 12 BẢNG -->
+  <div class="page-break">
+    <h2>3.2. Mô tả chi tiết cấu trúc 12 bảng dữ liệu</h2>
+    <p>Dưới đây là bảng tổng hợp chức năng, khóa chính và mối liên kết của toàn bộ 12 bảng đang vận hành trên cơ sở dữ liệu PostgreSQL:</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:6%">STT</th>
+          <th style="width:19%">Tên bảng</th>
+          <th style="width:43%">Ý nghĩa và vai trò nghiệp vụ</th>
+          <th style="width:14%">Khóa chính</th>
+          <th style="width:18%">Khóa ngoại</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><strong>users</strong></td><td>Lưu tài khoản nhân viên và vai trò phân quyền (Admin, Kế toán, Bán hàng, Thủ kho)</td><td>user_id</td><td>—</td></tr><tr><td>2</td><td><strong>categories</strong></td><td>Phân loại nhóm linh kiện (CPU, VGA, RAM, Mainboard, SSD, Nguồn, Vỏ case...)</td><td>category_id</td><td>—</td></tr><tr><td>3</td><td><strong>suppliers</strong></td><td>Thông tin nhà cung cấp, mã số thuế, tài khoản ngân hàng và công nợ phải trả</td><td>supplier_id</td><td>—</td></tr><tr><td>4</td><td><strong>customers</strong></td><td>Thông tin khách hàng, nhóm khách (lẻ, phòng net, doanh nghiệp), hạn mức và công nợ</td><td>customer_id</td><td>—</td></tr><tr><td>5</td><td><strong>products</strong></td><td>Danh mục 52 linh kiện, mã SKU, giá nhập bình quân, giá bán, tồn kho và vị trí kệ</td><td>product_id</td><td>category_id</td></tr><tr><td>6</td><td><strong>warranty_serials</strong></td><td>Quản lý từng mã Serial bảo hành và trạng thái (Trong kho, Đã bán, Bảo hành)</td><td>serial_id</td><td>product_id</td></tr><tr><td>7</td><td><strong>purchase_receipts</strong></td><td>Phiếu nhập hàng từ nhà cung cấp, tổng tiền, đã thanh toán và trạng thái nhập kho</td><td>receipt_id</td><td>supplier_id, user_id</td></tr><tr><td>8</td><td><strong>purchase_details</strong></td><td>Chi tiết từng mặt hàng, số lượng và đơn giá trong mỗi phiếu nhập hàng</td><td>pur_detail_id</td><td>receipt_id, product_id</td></tr><tr><td>9</td><td><strong>invoices</strong></td><td>Hóa đơn bán hàng tại quầy và đơn đặt hàng online, thuế VAT, trạng thái thanh toán</td><td>invoice_id</td><td>customer_id, user_id</td></tr><tr><td>10</td><td><strong>invoice_details</strong></td><td>Chi tiết từng linh kiện, số lượng, đơn giá bán và thành tiền trên hóa đơn</td><td>detail_id</td><td>invoice_id, product_id</td></tr><tr><td>11</td><td><strong>payments</strong></td><td>Sổ quỹ Thu - Chi (thu tiền bán hàng, thu nợ, chi trả nhà cung cấp, chi hoàn trả)</td><td>payment_id</td><td>invoice_id, receipt_id, user_id</td></tr><tr><td>12</td><td><strong>stock_adjustments</strong></td><td>Phiếu kiểm kê và điều chỉnh chênh lệch tồn kho thực tế so với sổ sách</td><td>adjustment_id</td><td>product_id, user_id</td></tr>
+      </tbody>
+    </table>
+
+    <h2>3.3. Quy trình luân chuyển dữ liệu kế toán &amp; kho</h2>
+    <ul>
+      <li><strong>Luồng Nhập hàng (2 bước tách biệt):</strong> Khi Kế toán hoặc Thủ kho lập phiếu nhập hàng, hệ thống ghi nhận vào bảng <em>Phiếu nhập hàng</em> và <em>Chi tiết nhập</em> ở trạng thái "Chờ nhập kho" (chưa cộng tồn kho để tránh bán nhầm hàng chưa kiểm). Sau khi Thủ kho kiểm đếm thực tế và bấm xác nhận lên kệ, tồn kho mới được cộng, giá vốn bình quân gia quyền được tính lại tự động và số lượng mã Serial mới được đưa vào trạng thái "Trong kho".</li>
+      <li><strong>Luồng Bán hàng tại quầy &amp; Online:</strong>
+        <ul>
+          <li><em>Tại quầy:</em> Nhân viên chọn khách hàng, linh kiện và mã Serial bảo hành; hệ thống trừ tồn kho, kiểm tra hạn mức công nợ (nếu khách mua nợ) và tự động sinh phiếu thu tiền vào bảng <em>Sổ quỹ Thu - Chi</em> nếu khách thanh toán ngay.</li>
+          <li><em>Đặt hàng Online:</em> Khách đặt mua từ trang cửa hàng sẽ sinh hóa đơn ở trạng thái "Chờ thanh toán" (giữ hàng trước, chưa ghi nhận công nợ mua chịu) cho tới khi Kế toán đối chiếu tiền chuyển khoản hoặc tiền thu hộ COD để xác nhận thu tiền.</li>
+        </ul>
+      </li>
+      <li><strong>Luồng Đổi trả hàng 3 bước (Kiểm soát chặt chẽ):</strong> Bước 1: Bán hàng/Kế toán gửi yêu cầu trả hàng → Bước 2: Thủ kho kiểm tra hàng thực tế (nếu còn nguyên vẹn thì nhập lại vào kệ và cộng tồn kho; nếu bị lỗi thì chuyển sang hàng chờ bảo hành hãng, không cộng tồn bán) → Bước 3: Kế toán xác nhận chi tiền hoàn lại cho khách và trừ bớt công nợ nếu có.</li>
+    </ul>
+  </div>
+
+  <!-- TRANG 10-15: ẢNH GIAO DIỆN (2 ảnh / trang) -->
+  <div class="page-break">
+    <h1>4. Ảnh giao diện hệ thống thực tế</h1>
+    <p>Toàn bộ hình ảnh dưới đây được chụp trực tiếp từ hệ thống <strong>FAST Computer</strong> đang vận hành trực tuyến tại địa chỉ <em>https://fast-computer.onrender.com</em>:</p>
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/01-shop.png" alt="Hình 4.1: Trang bán hàng Online dành cho khách (FAST Computer Storefront)" />
+        <div class="shot-title">Hình 4.1: Trang bán hàng Online dành cho khách (FAST Computer Storefront)</div>
+        <div class="shot-desc">Khách hàng có thể tìm kiếm nhanh 52 mã linh kiện theo danh mục, hãng sản xuất, thêm vào giỏ hàng và đặt mua trực tuyến.</div>
+      </div>
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/02-login.png" alt="Hình 4.2: Màn hình Đăng nhập hệ thống quản trị & kế toán nội bộ" />
+        <div class="shot-title">Hình 4.2: Màn hình Đăng nhập hệ thống quản trị & kế toán nội bộ</div>
+        <div class="shot-desc">Cổng đăng nhập bảo mật dành riêng cho 4 vai trò nhân viên nội bộ (Admin, Kế toán, Bán hàng, Thủ kho).</div>
+      </div>
+    
+  </div>
+
+  <div class="page-break">
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/03-dashboard.png" alt="Hình 4.3: Bảng điều khiển Tổng quan (Dashboard)" />
+        <div class="shot-title">Hình 4.3: Bảng điều khiển Tổng quan (Dashboard)</div>
+        <div class="shot-desc">Hiển thị nhanh doanh thu, giá trị tồn kho, cảnh báo linh kiện sắp hết và các chỉ số tài chính trọng yếu trong ngày.</div>
+      </div>
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/04-products.png" alt="Hình 4.4: Danh mục Sản phẩm & Quản lý mã SKU" />
+        <div class="shot-title">Hình 4.4: Danh mục Sản phẩm & Quản lý mã SKU</div>
+        <div class="shot-desc">Quản lý thông tin chi tiết linh kiện: mã SKU, giá nhập bình quân, giá bán, tồn kho, định mức an toàn và vị trí kệ.</div>
+      </div>
+    
+  </div>
+
+  <div class="page-break">
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/05-warehouse-map.png" alt="Hình 4.5: Sơ đồ Mặt bằng Nhà kho 2D (4 Dãy × 4 Kệ × 4 Ô = 64 ô)" />
+        <div class="shot-title">Hình 4.5: Sơ đồ Mặt bằng Nhà kho 2D (4 Dãy × 4 Kệ × 4 Ô = 64 ô)</div>
+        <div class="shot-desc">Trực quan hóa vị trí từng linh kiện theo màu sắc trạng thái tồn kho, hỗ trợ tìm nhanh ô chứa hàng khi nhập/xuất.</div>
+      </div>
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/06-inventory.png" alt="Hình 4.6: Quản lý Kho, Duyệt nhập kho & Xử lý Đổi trả (RMA)" />
+        <div class="shot-title">Hình 4.6: Quản lý Kho, Duyệt nhập kho & Xử lý Đổi trả (RMA)</div>
+        <div class="shot-desc">Thủ kho xác nhận hàng thực tế lên kệ và kiểm tra tình trạng linh kiện khách trả lại (còn nguyên vẹn hay lỗi bảo hành).</div>
+      </div>
+    
+  </div>
+
+  <div class="page-break">
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/07-sales.png" alt="Hình 4.7: Phân hệ Bán hàng, Xuất hóa đơn & Thu tiền" />
+        <div class="shot-title">Hình 4.7: Phân hệ Bán hàng, Xuất hóa đơn & Thu tiền</div>
+        <div class="shot-desc">Lập hóa đơn bán hàng tại quầy hoặc xử lý đơn khách đặt online, in hóa đơn VAT 10% và ghi nhận thu tiền.</div>
+      </div>
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/08-purchase.png" alt="Hình 4.8: Phân hệ Nhập hàng từ Nhà cung cấp" />
+        <div class="shot-title">Hình 4.8: Phân hệ Nhập hàng từ Nhà cung cấp</div>
+        <div class="shot-desc">Tạo phiếu nhập hàng, tự động tính lại giá vốn bình quân gia quyền và cập nhật công nợ phải trả nhà cung cấp.</div>
+      </div>
+    
+  </div>
+
+  <div class="page-break">
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/09-finance.png" alt="Hình 4.9: Sổ quỹ Thu - Chi & Theo dõi Công nợ (TK 131 / TK 331)" />
+        <div class="shot-title">Hình 4.9: Sổ quỹ Thu - Chi & Theo dõi Công nợ (TK 131 / TK 331)</div>
+        <div class="shot-desc">Quản lý toàn bộ phiếu thu tiền khách hàng, phiếu chi trả nhà cung cấp, phiếu chi hoàn tiền và tổng hợp công nợ.</div>
+      </div>
+    
+      <div class="shot-card">
+        <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/10-reports.png" alt="Hình 4.10: Báo cáo Doanh thu, Giá vốn & Lợi nhuận gộp" />
+        <div class="shot-title">Hình 4.10: Báo cáo Doanh thu, Giá vốn & Lợi nhuận gộp</div>
+        <div class="shot-desc">Biểu đồ trực quan xu hướng doanh thu theo ngày, tỷ trọng nhóm hàng bán chạy, giá vốn hàng bán và lãi gộp.</div>
+      </div>
+    
+  </div>
+
+  <div class="page-break">
+    <div class="shot-card tall">
+      <img src="file:///c:/Ứng dụng tin học trong kế toán/fast-computer-app/docs/screenshots/11-users.png" alt="Hình 4.11: Quản lý Nhân sự & Phân quyền 5 thành viên" />
+      <div class="shot-title">Hình 4.11: Quản lý Nhân sự & Phân quyền 5 thành viên</div>
+      <div class="shot-desc">Quản lý tài khoản của 5 thành viên trong nhóm, phân quyền chặt chẽ theo từng chức năng nghiệp vụ.</div>
+    </div>
+    <div class="callout">
+      <strong>Đánh giá giao diện tổng thể:</strong> Giao diện được thiết kế thống nhất với thanh điều hướng bên trái phân tách rõ nhóm Danh mục và nhóm Nghiệp vụ chính, màu sắc trực quan giúp nhân viên kế toán và thủ kho thao tác nhanh mà không bị rối mắt.
+    </div>
+  </div>
+
+  <!-- TRANG 16-17: CHỨC NĂNG ĐÃ HOÀN THÀNH -->
+  <div class="page-break">
+    <h1>5. Các chức năng đã hoàn thành</h1>
+    <p>Tính đến mốc kiểm tra Trình 2, nhóm đã hoàn thiện và kiểm thử chạy ổn định các nhóm chức năng sau:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th style="width:6%">STT</th><th style="width:28%">Phân hệ chức năng</th><th style="width:66%">Chi tiết những việc đã làm được</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Kênh bán hàng Online &amp; Thanh toán VietQR</strong></td>
+          <td>Xây dựng trang cửa hàng trực tuyến với 52 sản phẩm đầy đủ hình ảnh đã tối ưu dung lượng, bộ lọc theo loại linh kiện/hãng, giỏ hàng và màn hình đặt hàng hiển thị mã QR chuyển khoản tự động theo đúng số tiền và mã hóa đơn.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Quản lý Danh mục &amp; 52 mã linh kiện (SKU)</strong></td>
+          <td>Thêm, sửa, ngừng kinh doanh linh kiện; quản lý danh mục loại hàng, thông tin khách hàng (kèm hạn mức công nợ) và thông tin nhà cung cấp (kèm mã số thuế, tài khoản ngân hàng, địa chỉ bảo hành).</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Sơ đồ Mặt bằng Kho 2D trực quan</strong></td>
+          <td>Xây dựng bản đồ kho 4 Dãy × 4 Kệ × 4 Ô (64 ô chứa hàng) gắn trực tiếp với từng sản phẩm; hỗ trợ tìm kiếm phát sáng ô chứa hàng, phân biệt màu trạng thái (còn nhiều, sắp hết, hết hàng, ô trống) và chuyển kệ linh hoạt.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Quy trình Nhập hàng &amp; Duyệt kho 2 bước</strong></td>
+          <td>Lập phiếu nhập từ nhà cung cấp, tách riêng bước Thủ kho kiểm nhận hàng lên kệ mới cộng tồn kho và tính lại giá vốn bình quân gia quyền; quản lý danh sách mã Serial nhập vào.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Bán hàng, Xuất hóa đơn &amp; Chặn bán lỗ</strong></td>
+          <td>Lập hóa đơn bán lẻ/bán nợ (kiểm tra vượt hạn mức nợ, không cho khách lẻ vãng lai ghi nợ), chặn nhân viên bán hàng bán dưới giá vốn, in hóa đơn VAT 10% và theo dõi danh sách đơn chờ thu tiền.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Kiểm soát Đổi trả hàng 3 bước &amp; Kiểm kê kho</strong></td>
+          <td>Tách bạch rõ quyền Bán hàng gửi yêu cầu trả → Thủ kho kiểm nhận tình trạng hàng (nhập lại kệ hay chuyển bảo hành) → Kế toán chi tiền hoàn trả. Hỗ trợ kiểm kê số lượng thực tế và tự động cân bằng chênh lệch kho.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Sổ quỹ Thu - Chi &amp; Báo cáo tài chính</strong></td>
+          <td>Ghi nhận đầy đủ phiếu thu, phiếu chi, theo dõi tổng công nợ phải thu khách hàng (TK 131) và phải trả nhà cung cấp (TK 331); tổng hợp báo cáo doanh thu, giá vốn, lãi gộp cùng các biểu đồ trực quan.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>Phân quyền 5 thành viên &amp; Đưa lên mạng</strong></td>
+          <td>Cài đặt đúng 5 tài khoản thật của thành viên nhóm với mật khẩu mã hóa an toàn, đồng bộ múi giờ Việt Nam và triển khai thành công lên Render + Neon Cloud để sử dụng từ xa.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TRANG 18: CHỨC NĂNG CHƯA HOÀN THÀNH + KHÓ KHĂN -->
+  <div class="page-break">
+    <h1>6. Các chức năng chưa hoàn thành</h1>
+    <p>Bên cạnh các nghiệp vụ cốt lõi đã chạy ổn định, nhóm tự rà soát và ghi nhận một số chức năng chưa hoàn thiện để tiếp tục bổ sung ở giai đoạn tiếp theo:</p>
+
+    <div class="callout-warn">
+      <h3 style="margin-top:0; color:#92400e;">6.1. Tự động hủy đơn đặt hàng online quá hạn thanh toán</h3>
+      <p style="margin-bottom:0;">
+        Hiện tại, khi khách đặt mua hàng trên trang web, hệ thống giữ hàng (trừ tồn kho) ngay lập tức để tránh bán trùng cho người khác dù hóa đơn đang ở trạng thái "Chờ thanh toán". Tuy nhiên, phần mềm chưa có cơ chế tự động đếm thời gian (ví dụ quá 30 phút hoặc 24 giờ) để tự hủy đơn và hoàn lại số lượng tồn kho nếu khách không chuyển khoản hoặc hủy nhận hàng. Hiện tại nhân viên vẫn phải kiểm tra và bấm hủy thủ công.
+      </p>
+    </div>
+
+    <div class="callout-warn">
+      <h3 style="margin-top:0; color:#92400e;">6.2. Bắt buộc nhập đủ số lượng mã Serial cho linh kiện giá trị cao</h3>
+      <p style="margin-bottom:0;">
+        Khi lập hóa đơn bán hàng, hệ thống mới chỉ chặn trường hợp nhập thừa mã Serial so với số lượng bán, chứ chưa bắt buộc nhân viên phải nhập đủ 100% mã Serial tương ứng với số lượng bán ra (ví dụ bán 3 chiếc card đồ họa nhưng chỉ nhập 1 mã Serial hoặc bỏ trống thì hệ thống vẫn cho lưu). Nguyên nhân là hiện tại danh mục sản phẩm chưa tách riêng nhóm linh kiện đắt tiền bắt buộc quản lý Serial (CPU, VGA, Mainboard) và nhóm phụ kiện giá rẻ không cần Serial (dây cáp, keo tản nhiệt).
+      </p>
+    </div>
+
+    <div class="callout-warn">
+      <h3 style="margin-top:0; color:#92400e;">6.3. Xuất trực tiếp báo cáo và bảng kê ra file Excel</h3>
+      <p style="margin-bottom:0;">
+        Các báo cáo doanh thu, giá vốn, công nợ và sổ quỹ hiện đã xem và in trực tiếp ra giấy hoặc file PDF từ trình duyệt, nhưng chưa bổ sung nút xuất nhanh ra file bảng tính Excel theo mẫu sổ sách kế toán để kế toán viên lưu trữ hoặc chỉnh sửa thêm khi cần.
+      </p>
+    </div>
+
+    <h1 style="margin-top: 18px;">7. Khó khăn gặp phải trong quá trình thực hiện</h1>
+    <p>Trong suốt quá trình phân tích, thiết kế và triển khai hệ thống FAST Computer, nhóm đã gặp phải một số khó khăn thực tế sau:</p>
+
+    <ul>
+      <li>
+        <strong>Chưa am hiểu sâu nghiệp vụ kế toán và bán hàng đặc thù ngành linh kiện PC:</strong> Do các thành viên đều đang trong quá trình học tập, chưa có nhiều kinh nghiệm làm việc thực tế tại cửa hàng máy tính, nên lúc đầu nhóm gặp nhiều bỡ ngỡ với các quy trình chuyên ngành như: cách tính giá vốn bình quân gia quyền sau mỗi lần nhập lô mới, cách tách bạch công nợ phải thu khách hàng (TK 131) và phải trả nhà cung cấp (TK 331), quy trình bảo hành theo từng mã Serial hay cách kiểm soát hàng đổi trả giữa Thủ kho và Kế toán. Vì vậy, nhóm cần dành nhiều thời gian tìm hiểu tài liệu kế toán, tham khảo quy trình thực tế và rất mong nhận được góp ý từ giảng viên để hoàn thiện phần mềm sát thực tế hơn.
+      </li>
+      <li>
+        <strong>Thống nhất quy trình nghiệp vụ kế toán – kho – bán hàng:</strong> Các thành viên phải mất nhiều thời gian trao đổi để phân chia rạch ròi quyền hạn của từng vai trò (như ai được tạo phiếu nhập, ai được duyệt hàng lên kệ, ai được kiểm tra hàng lỗi và ai được chi tiền hoàn lại) sao cho vừa đúng nguyên tắc kiểm soát kế toán vừa thuận tiện khi thao tác hàng ngày.
+      </li>
+      <li>
+        <strong>Xử lý đồng bộ tồn kho và công nợ khi nhiều người dùng cùng lúc:</strong> Khi vừa có khách đặt mua online, vừa có nhân viên lập hóa đơn tại quầy và thủ kho kiểm kê, việc đảm bảo số liệu tồn kho không bị trừ âm và công nợ khách hàng không bị cộng sai đòi hỏi nhóm phải kiểm thử đi kiểm thử lại rất kỹ.
+      </li>
+      <li>
+        <strong>Tối ưu tốc độ tải trang khi đưa hệ thống lên mạng (Cloud):</strong> Ban đầu nhóm sử dụng ảnh sản phẩm chất lượng gốc nên tổng dung lượng thư mục ảnh lên tới hơn 27 MB, khiến người dùng mở trang bán hàng từ xa bị tải ảnh chậm. Nhóm đã phải tìm hiểu cách nén lại toàn bộ 52 ảnh sản phẩm xuống còn khoảng 5 MB và bật bộ nhớ đệm trình duyệt để trang web mượt hơn.
+      </li>
+      <li>
+        <strong>Cấu hình múi giờ và triển khai môi trường thực tế:</strong> Máy chủ đám mây mặc định chạy theo giờ quốc tế khiến ngày giờ trên hóa đơn ban đầu bị lệch 7 tiếng so với giờ Việt Nam; nhóm phải rà soát và cấu hình đồng bộ lại toàn bộ múi giờ hiển thị và lưu trữ cho khớp thực tế.
+      </li>
+    </ul>
+
+    <div class="callout" style="margin-top: 14px;">
+      <strong>Định hướng hoàn thiện tiếp theo:</strong> Trong giai đoạn tới, nhóm sẽ ưu tiên bổ sung bộ đếm tự động hủy đơn online quá hạn thanh toán để giải phóng tồn kho kịp thời, gắn cờ phân loại linh kiện bắt buộc nhập đủ mã Serial khi xuất bán, và bổ sung tính năng xuất sổ sách ra file Excel.
+    </div>
+  </div>
+
+</body>
+</html>

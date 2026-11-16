@@ -368,10 +368,11 @@ router.post('/', requireRole('Admin', 'KeToan', 'BanHang'), async (req, res) => 
     // Ghi nhận phiếu thu nếu có thanh toán
     if (paid > 0) {
       const payNo = genDocNo('PT');
+      const receiptMethod = ['TienMat', 'ChuyenKhoan', 'QuetThe'].includes(payment_method) ? payment_method : 'TienMat';
       await client.query(
         `INSERT INTO payments (payment_no, payment_type, invoice_id, user_id, amount, payment_method, notes)
          VALUES ($1, 'Thu', $2, $3, $4, $5, $6)`,
-        [payNo, invoice.invoice_id, req.session.user.user_id, paid, payment_method || 'TienMat', `Thu tiền hóa đơn ${invoiceNo}`]
+        [payNo, invoice.invoice_id, req.session.user.user_id, paid, receiptMethod, `Thu tiền hóa đơn ${invoiceNo}`]
       );
     }
 
@@ -676,7 +677,8 @@ router.post('/:id/collect', requireRole('Admin', 'BanHang', 'KeToan'), async (re
       });
     }
 
-    const finalMethod = paymentMethod || inv.payment_method || 'ChuyenKhoan';
+    const rawMethod = paymentMethod || inv.payment_method;
+    const finalMethod = ['TienMat', 'ChuyenKhoan', 'QuetThe'].includes(rawMethod) ? rawMethod : 'ChuyenKhoan';
     const newDebt = currentDebt - amount;
     const newStatus = newDebt === 0 ? 'DaThanhToan' : 'ThanhToanMotPhan';
 

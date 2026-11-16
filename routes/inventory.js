@@ -49,6 +49,14 @@ function requireRole(...roles) {
 // Lịch sử biến động Nhập - Xuất - Kiểm kho (Thẻ kho kèm Tồn sau GD)
 router.get('/movements', requireAuth, async (req, res) => {
   try {
+    const rawQ = (req.query.q || '').trim();
+    const params = [];
+    let whereSql = '';
+    if (rawQ) {
+      params.push(`%${rawQ}%`);
+      whereSql = 'WHERE sku ILIKE $1 OR product_name ILIKE $1 OR doc_no ILIKE $1';
+    }
+
     const result = await pool.query(`
       SELECT * FROM (
         SELECT 'NHAP' AS move_type, pr.receipt_no AS doc_no, pr.receipt_date AS move_date,
@@ -77,9 +85,10 @@ router.get('/movements', requireAuth, async (req, res) => {
         JOIN products p ON sa.product_id = p.product_id
         JOIN users u ON sa.user_id = u.user_id
       ) AS movements
+      ${whereSql}
       ORDER BY move_date DESC
       LIMIT 50
-    `);
+    `, params);
 
     // Tính "Tồn sau GD" (running balance) ngược từ tồn hiện tại của từng sản phẩm
     const runningByProd = new Map();
